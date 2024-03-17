@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -340790334, guid: 67cc4cb7839cd3741b63733d5adf0442, type: 3}
+  m_Name: PoseEngine_TrackingSubMenu
+  m_EditorClassIdentifier: 
+  controls:
+  - name: Disable Feet
+    icon: {fileID: 0}
+    type: 102
+    parameter:
+      name: PoseEngine/Lock/Feet
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters: []
+    labels: []
+  - name: Disable Hips
+    icon: {fileID: 0}
+    type: 102
+    parameter:
+      name: PoseEngine/Lock/Hips
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters: []
+    labels: []
+  - name: Disable Hands
+    icon: {fileID: 0}
+    type: 102
+    parameter:
+      name: PoseEngine/Lock/Hands
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters: []
+    labels: []
+  - name: Disable Head
+    icon: {fileID: 0}
+    type: 102
+    parameter:
+      name: PoseEngine/Lock/Head
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters: []
+    labels: []
