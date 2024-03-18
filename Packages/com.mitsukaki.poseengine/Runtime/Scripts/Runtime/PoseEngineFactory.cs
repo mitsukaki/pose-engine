@@ -5,9 +5,11 @@ namespace com.mitsukaki.poseengine
 {
     public class PoseEngineFactory : MonoBehaviour, IEditorOnly
     {
-        public string version = "0.0.2a";
+        public string version = "0.1.10";
 
         public string rootMenuName = "Pose Engine";
+
+        public bool deleteNameIfIconSet = false;
 
         public GameObject avatar;
     }

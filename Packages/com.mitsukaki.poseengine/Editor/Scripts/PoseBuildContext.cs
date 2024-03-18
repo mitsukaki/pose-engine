@@ -16,15 +16,19 @@ namespace com.mitsukaki.poseengine.editor
 
         public VRCExpressionsMenu poseMenu;
 
+        public PoseEngineFactory factory;
+
         public PoseBuildContext(
             GameObject avatarRoot,
             AnimatorController poseController,
-            VRCExpressionsMenu poseMenu
+            VRCExpressionsMenu poseMenu,
+            PoseEngineFactory factory
         )
         {
             this.avatarRoot = avatarRoot;
             this.poseController = poseController;
             this.poseMenu = poseMenu;
+            this.factory = factory;
         }
     }
 }

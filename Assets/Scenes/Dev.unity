@@ -419,6 +419,11 @@ PrefabInstance:
       propertyPath: avatar
       value: 
       objectReference: {fileID: 228051321}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: deleteNameIfIconSet
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7915159162107688357, guid: 81b2de15fa18fe44eb46d690d679efed,
         type: 3}
       propertyPath: m_Name

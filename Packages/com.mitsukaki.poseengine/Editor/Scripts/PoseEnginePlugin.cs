@@ -60,9 +60,24 @@ namespace com.mitsukaki.poseengine.editor
                 }
             );
 
-            assembler.Assemble(avatarRootObject);
+            // find the factory
+            var factory = GetPoseEngineFactoryInstance();
+
+            assembler.Assemble(avatarRootObject, factory);
 
             AssetDatabase.SaveAssets();
+        }
+
+        private PoseEngineFactory GetPoseEngineFactoryInstance()
+        {
+            var factory = GameObject.FindObjectOfType<PoseEngineFactory>();
+
+            // if we dont find one, create it in the scene
+            if (factory == null)
+                factory = new GameObject("PoseEngineFactory").AddComponent<PoseEngineFactory>();
+            
+
+            return factory;
         }
 
         private Vector3 ComputeStatePosition(int index, int itemCount)

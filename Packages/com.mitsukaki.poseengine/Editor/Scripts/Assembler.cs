@@ -24,18 +24,7 @@ namespace com.mitsukaki.poseengine.editor
             this.generators = generators;
         }
 
-        public static void DefaultAssemble(GameObject avatarRoot)
-        {
-            var assembler = new Assembler(
-                new List<IPoseGenerator>{
-                    new SimplePoseGenerator()
-                }
-            );
-
-            assembler.Assemble(avatarRoot);
-        }
-
-        public void Assemble(GameObject avatarRoot)
+        public void Assemble(GameObject avatarRoot, PoseEngineFactory factory)
         {
             // Create the needed directories
             AssetUtility.CreateGeneratedDirectories();
@@ -47,7 +36,7 @@ namespace com.mitsukaki.poseengine.editor
             );
 
             // Create the pose menu
-            var poseMenu = CreatePoseMenu(poseEngineInstance);
+            var poseMenu = CreatePoseMenu(poseEngineInstance, factory);
             if (poseMenu == null) {
                 Debug.LogError("[PoseEngine] Failed to create pose menu.");
                 return;
@@ -63,7 +52,7 @@ namespace com.mitsukaki.poseengine.editor
             BuildControlLayer(animBuilder);
 
             // Run the pose animation generators
-            ExecuteGenerators(animBuilder, avatarRoot, poseMenu);
+            ExecuteGenerators(animBuilder, avatarRoot, poseMenu, factory);
 
             // Apply the animator to the animator merger
             var animatorMerger = FindAnimatorMerger(
@@ -148,7 +137,8 @@ namespace com.mitsukaki.poseengine.editor
         private AnimatorController ExecuteGenerators(
             anim.Builder animBuilder,
             GameObject avatarRoot,
-            VRCExpressionsMenu poseMenu
+            VRCExpressionsMenu poseMenu,
+            PoseEngineFactory factory
         )
         {
             // Build the pose layer
@@ -156,7 +146,7 @@ namespace com.mitsukaki.poseengine.editor
 
             // Create the build context
             var poseBuildContext = new PoseBuildContext(
-                avatarRoot, animBuilder, poseMenu
+                avatarRoot, animBuilder, poseMenu, factory
             );
 
             // Run the generators
@@ -182,11 +172,18 @@ namespace com.mitsukaki.poseengine.editor
         }
 
         private VRCExpressionsMenu CreatePoseMenu(
-            GameObject poseEngineInstance
+            GameObject poseEngineInstance,
+            PoseEngineFactory factory
         )
         {
+            // Set the root menu name
+            SetRootMenuName(poseEngineInstance, factory.rootMenuName);
+
             // Get the pose menu installer
-            var poseMenuInstaller = CreatePoseMenuInstaller(poseEngineInstance);
+            var poseMenuInstaller = CreatePoseMenuInstaller(
+                poseEngineInstance, "Poses"
+            );
+
             if (poseMenuInstaller == null) {
                 Debug.LogError("[PoseEngine] Failed to create pose menu installer...");
                 return null;
@@ -203,8 +200,25 @@ namespace com.mitsukaki.poseengine.editor
             return poseMenu;
         }
 
+        private void SetRootMenuName(
+            GameObject poseEngineInstance,
+            string menuName
+        )
+        {
+            var rootMenu = poseEngineInstance.transform.GetChild(0)
+                .GetComponent<ModularAvatarMenuItem>();
+            
+            if (rootMenu == null) {
+                Debug.LogError("[PoseEngine] Failed to find root menu...");
+                return;
+            }
+
+            rootMenu.name = menuName;
+        }
+
         private ModularAvatarMenuItem CreatePoseMenuInstaller(
-            GameObject poseEngineInstance
+            GameObject poseEngineInstance,
+            string menuName
         )
         {
             // find the pose menu container
@@ -216,6 +230,7 @@ namespace com.mitsukaki.poseengine.editor
 
             // get the pose menu installer
             var poseMenuInstaller = poseObj.GetComponent<ModularAvatarMenuItem>();
+            poseMenuInstaller.name = menuName;
             if (poseMenuInstaller == null) {
                 Debug.LogError("[PoseEngine] Failed to find pose menu installer...");
                 return null;

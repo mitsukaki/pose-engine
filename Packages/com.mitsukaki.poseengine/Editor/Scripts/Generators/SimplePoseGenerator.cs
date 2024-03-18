@@ -15,7 +15,8 @@ namespace com.mitsukaki.poseengine.editor.generators
             ProcessSimplePoseComponents(
                 context.avatarRoot,
                 context.poseController,
-                context.poseMenu
+                context.poseMenu,
+                context.factory
             );
         }
 
@@ -67,7 +68,8 @@ namespace com.mitsukaki.poseengine.editor.generators
         private void ProcessSimplePoseComponents(
             GameObject avatarRootObject,
             AnimatorController actionAnim,
-            VRCExpressionsMenu poseMenu
+            VRCExpressionsMenu poseMenu,
+            PoseEngineFactory factory
         )
         {
             var compList = avatarRootObject.GetComponentsInChildren<PE_SimplePoseList>();
@@ -92,7 +94,10 @@ namespace com.mitsukaki.poseengine.editor.generators
                     // create the pose menu item
                     var poseMenuItem = new VRCExpressionsMenu.Control();
 
-                    poseMenuItem.name = pose.name;
+                    if (factory.deleteNameIfIconSet && pose.icon != null)
+                        poseMenuItem.name = "";
+                    else poseMenuItem.name = pose.name;
+
                     poseMenuItem.icon = pose.icon;
                     poseMenuItem.type = VRCExpressionsMenu.Control.ControlType.Button;
                     poseMenuItem.value = stateIndex;
