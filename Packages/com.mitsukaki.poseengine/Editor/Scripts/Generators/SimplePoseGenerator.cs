@@ -114,6 +114,7 @@ namespace com.mitsukaki.poseengine.editor.generators
 
                     state.motion = CreateElevatorBlendTree(pose.clips[0], pose.name);
                     state.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
+                    
 
                     VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/Enter");
 
@@ -133,8 +134,13 @@ namespace com.mitsukaki.poseengine.editor.generators
                     disablingTransition.duration = 0.25f;
                     disablingTransition.hasFixedDuration = true;
                     disablingTransition.AddCondition(
-                        AnimatorConditionMode.Equals,
-                        255,
+                        AnimatorConditionMode.NotEqual,
+                        stateIndex,
+                        "PoseEngine/Pose"
+                    );
+                    disablingTransition.AddCondition(
+                        AnimatorConditionMode.NotEqual,
+                        0,
                         "PoseEngine/Pose"
                     );
 

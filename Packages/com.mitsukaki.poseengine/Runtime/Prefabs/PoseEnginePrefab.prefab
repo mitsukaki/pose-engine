@@ -204,7 +204,7 @@ MonoBehaviour:
     syncType: 3
     localOnly: 0
     defaultValue: 1
-    saved: 1
+    saved: 0
     hasExplicitDefaultValue: 1
     m_overrideAnimatorDefaults: 1
   - nameOrPrefix: PoseEngine/Pose
@@ -231,7 +231,7 @@ MonoBehaviour:
     remapTo: 
     internalParameter: 0
     isPrefix: 0
-    syncType: 3
+    syncType: 2
     localOnly: 1
     defaultValue: 0
     saved: 0
@@ -303,10 +303,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Control:
     name: 
-    icon: {fileID: 2800000, guid: 99112b19b4bd4424aa138654a86b8854, type: 3}
+    icon: {fileID: 0}
     type: 203
     parameter:
-      name: PoseEngine/AlteringElevation
+      name: 
     value: 0.5
     style: 0
     subMenu: {fileID: 0}
@@ -422,7 +422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Control:
     name: 
-    icon: {fileID: 2800000, guid: 85a7dfe0b8549dd46ac2741ebfa54c9d, type: 3}
+    icon: {fileID: 0}
     type: 101
     parameter:
       name: PoseEngine/Pose
@@ -482,7 +482,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Control:
     name: 
-    icon: {fileID: 2800000, guid: 801ba8dfb4af57e4ca9022eff971a455, type: 3}
+    icon: {fileID: 0}
     type: 103
     parameter:
       name: 

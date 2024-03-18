@@ -131,7 +131,9 @@ namespace com.mitsukaki.poseengine.editor
             animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
                 AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
             ), poseLayer);
+            
             animBuilder.AddDefaultState("PoseEngine_Inactive", poseLayer, out poseState);
+            VRCBehaviourUtility.SetParamFlag(poseState, "PoseEngine/PoseState/Exit");
         }
 
         private AnimatorController ExecuteGenerators(
