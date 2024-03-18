@@ -27,32 +27,28 @@ namespace com.mitsukaki.poseengine.Editor.generators
             var translatedClip = Object.Instantiate(clip);
             translatedClip.name = clip.name + " (Translated + " + translation + ")";
 
-            var curveBindings = AnimationUtility.GetCurveBindings(clip);
+            var binding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
 
-            // move the curve "Root T" up by 1.0
-            var rootYCurve = AnimationUtility.GetEditorCurve(
-                clip, "", typeof(float), "RootT.y"
-            );
-
-            AnimationCurve newRootYCurve;
-            if (rootYCurve != null)
+            // iterate over all keys and add the translation
+            if (curve != null)
             {
-                newRootYCurve = new AnimationCurve(rootYCurve.keys);
-                for (int i = 0; i < newRootYCurve.keys.Length; i++)
-                    newRootYCurve.keys[i].value += translation;
+                for (int i = 0; i < curve.keys.Length; i++)
+                {
+                    Keyframe key = curve.keys[i];
+                    key.value += translation;
+
+                    curve.MoveKey(i, key);
+                }
             }
             else
             {
-                newRootYCurve = new AnimationCurve();
-                newRootYCurve.AddKey(0, translation);
-                newRootYCurve.AddKey(clip.length, translation);
+                curve = new AnimationCurve();
+                curve.AddKey(0, translation);
+                curve.AddKey(clip.length, translation);
             }
 
-            AnimationUtility.SetEditorCurve(
-                translatedClip,
-                EditorCurveBinding.FloatCurve("", typeof(Transform), "RootT.y"),
-                newRootYCurve
-            );
+            AnimationUtility.SetEditorCurve(translatedClip, binding, curve);
 
             return translatedClip;
         }
@@ -63,7 +59,7 @@ namespace com.mitsukaki.poseengine.Editor.generators
             blendTree.name = name;
 
             blendTree.blendType = BlendTreeType.Simple1D;
-            blendTree.blendParameter = "PoseEngine/Elevation8";
+            blendTree.blendParameter = "PoseEngine/Elevation";
 
             blendTree.AddChild(TranslateMotion(clip, -2.0f), 0.0f);
             blendTree.AddChild(TranslateMotion(clip, 2.0f), 1.0f);

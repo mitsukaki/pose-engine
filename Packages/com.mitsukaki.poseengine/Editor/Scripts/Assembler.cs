@@ -135,6 +135,19 @@ namespace com.mitsukaki.poseengine.Editor
             AssetDatabase.SaveAssets();
         }
 
+        private void BuildPoseLayer(anim.Builder animBuilder)
+        {
+            AnimatorControllerLayer poseLayer;
+            AnimatorState poseState;
+
+            animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
+            animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
+            animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
+                AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
+            ), poseLayer);
+            animBuilder.AddDefaultState("PoseEngine_Inactive", poseLayer, out poseState);
+        }
+
         private AnimatorController ExecuteGenerators(
             anim.Builder animBuilder,
             GameObject avatarRoot,
@@ -142,13 +155,7 @@ namespace com.mitsukaki.poseengine.Editor
         )
         {
             // Build the pose layer
-            AnimatorControllerLayer poseLayer;
-            AnimatorState poseState;
-            animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
-            animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
-                AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
-            ), poseLayer);
-            animBuilder.AddDefaultState("PoseEngine_Inactive", poseLayer, out poseState);
+            BuildPoseLayer(animBuilder);
 
             // Create the build context
             var poseBuildContext = new PoseBuildContext(
