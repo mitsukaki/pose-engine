@@ -1,22 +1,20 @@
 {
   "name": "com.mitsukaki.poseengine",
   "displayName": "Pose Engine",
-  "version": "0.1.7",
+  "version": "0.1.8",
+  "unity": "2019.4",
   "description": "A tool for building locomotion & pose systems for VRChat avatars.",
-  "gitDependencies": {},
-  "vpmDependencies": {
-    "com.vrchat.avatars": "3.5.2-beta.1",
-    "nadena.dev.ndmf": ">=1.3.6 <2.0.0-a"
-  },
   "author": {
-    "name": "Mitsukaki",
+    "name": "mitsukaki",
     "email": "lite260@gmail.com",
-    "url": ""
+    "url": "https://github.com/mitsukaki/pose-engine"
   },
-  "legacyFolders": {},
-  "legacyFiles": {},
-  "localPath": "E:\\Development\\pose-engine\\Packages\\com.mitsukaki.poseengine",
-  "dependencies": {
-    "nadena.dev.ndmf": ""
+  "repo": "https://vpm.mitsukaki.com/index.json",
+  "dependencies": { },
+  "vpmDependencies": {
+    "com.vrchat.avatars": ">=3.4.0",
+    "com.vrchat.base": ">=3.4.0",
+    "nadena.dev.ndmf": ">=1.3.6 <2.0.0-a",
+    "nadena.dev.modular-avatar": ">=1.9.0"
   }
 }

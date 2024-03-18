@@ -17,6 +17,9 @@
 /[Aa]ssets/Test_Avatar/
 /[Aa]ssets/Test_Avatar.meta
 
+# Ignore the generated folder
+/[Aa]ssets/PoseEngine/Generated*
+
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
 
