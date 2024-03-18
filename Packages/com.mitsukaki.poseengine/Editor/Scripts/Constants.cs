@@ -1,4 +1,4 @@
-namespace com.mitsukaki.poseengine.Editor
+namespace com.mitsukaki.poseengine.editor
 {
     static class Constants
     {

@@ -1,4 +1,3 @@
-#region
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +7,8 @@ using UnityEditor.Animations;
 using nadena.dev.ndmf;
 using nadena.dev.modular_avatar.core;
 
-using com.mitsukaki.poseengine.Editor;
-using com.mitsukaki.poseengine.Editor.generators;
+using com.mitsukaki.poseengine.editor;
+using com.mitsukaki.poseengine.editor.generators;
 
 using VRC.SDK3.Avatars.ScriptableObjects;
 using VRC.SDK3.Avatars.Components;
@@ -21,11 +20,9 @@ using static VRC.SDK3.Avatars.Components.VRCAnimatorLayerControl;
 // using ExpressionParameters = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionParameters;
 // using ExpressionParameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionParameters.Parameter;
 
-#endregion
-
 [assembly: ExportsPlugin(typeof(PoseEnginePlugin))]
 
-namespace com.mitsukaki.poseengine.Editor
+namespace com.mitsukaki.poseengine.editor
 {
     public class PoseEnginePlugin : Plugin<PoseEnginePlugin>
     {
@@ -33,7 +30,7 @@ namespace com.mitsukaki.poseengine.Editor
         /// This name is used to identify the plugin internally, and can be used to declare BeforePlugin/AfterPlugin
         /// dependencies. If not set, the full type name will be used.
         /// </summary>
-        public override string QualifiedName => "com.mitsukaki.poseengine.Editor";
+        public override string QualifiedName => "com.mitsukaki.poseengine.editor";
 
         /// <summary>
         /// The plugin name shown in debug UIs. If not set, the qualified name will be shown.

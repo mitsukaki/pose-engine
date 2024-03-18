@@ -1,4 +1,3 @@
-#region 
 
 using System.Collections.Generic;
 
@@ -11,9 +10,7 @@ using VRC.SDK3.Avatars.Components;
 using static VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
 using static VRC.SDK3.Avatars.Components.VRCAnimatorLayerControl;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor
+namespace com.mitsukaki.poseengine.editor
 {
     public static class VRCBehaviourUtility
     {

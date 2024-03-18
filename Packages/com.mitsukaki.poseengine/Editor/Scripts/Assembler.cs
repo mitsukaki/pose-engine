@@ -1,4 +1,3 @@
-#region 
 
 using System.Collections.Generic;
 
@@ -11,12 +10,10 @@ using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
-using com.mitsukaki.poseengine.Editor.generators;
-using static com.mitsukaki.poseengine.Editor.anim.Condition;
+using com.mitsukaki.poseengine.editor.generators;
+using static com.mitsukaki.poseengine.editor.anim.Condition;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor
+namespace com.mitsukaki.poseengine.editor
 {
     public class Assembler
     {

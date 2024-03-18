@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7118fff4699eae4aa88b4d961a61d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 0.1.9
+  version: 0.1.10
   rootMenuName: Pose Engine
   avatar: {fileID: 0}

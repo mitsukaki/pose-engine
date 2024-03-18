@@ -1,12 +1,9 @@
-#region 
 
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor.anim
+namespace com.mitsukaki.poseengine.editor.anim
 {
     public partial class Builder
     {

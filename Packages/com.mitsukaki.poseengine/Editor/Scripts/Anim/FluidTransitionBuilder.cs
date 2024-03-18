@@ -1,4 +1,3 @@
-#region 
 
 using System.Collections.Generic;
 
@@ -9,9 +8,7 @@ using UnityEditor.Animations;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor.anim
+namespace com.mitsukaki.poseengine.editor.anim
 {
     public partial class Builder
     {

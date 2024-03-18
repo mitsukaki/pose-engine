@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace com.mitsukaki.poseengine.Editor.ui
+namespace com.mitsukaki.poseengine.editor.ui
 {
     [CustomEditor(typeof(PE_SimplePoseList))]
     public class SimplePoseListEditor : UnityEditor.Editor

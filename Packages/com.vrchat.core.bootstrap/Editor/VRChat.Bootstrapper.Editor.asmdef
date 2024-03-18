@@ -1,5 +1,5 @@
 {
-    "name": "VRChat.Bootstrapper.Editor",
+    "name": "VRChat.Bootstrapper.editor",
     "references": [],
     "includePlatforms": [
         "Editor"

@@ -1,4 +1,4 @@
-namespace com.mitsukaki.poseengine.Editor.generators
+namespace com.mitsukaki.poseengine.editor.generators
 {
     public interface IPoseGenerator
     {

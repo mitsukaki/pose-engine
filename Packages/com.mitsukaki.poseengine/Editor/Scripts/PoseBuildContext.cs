@@ -1,4 +1,3 @@
-#region 
 
 using UnityEngine;
 using UnityEditor;
@@ -7,9 +6,7 @@ using UnityEditor.Animations;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor
+namespace com.mitsukaki.poseengine.editor
 {
     public struct PoseBuildContext
     {

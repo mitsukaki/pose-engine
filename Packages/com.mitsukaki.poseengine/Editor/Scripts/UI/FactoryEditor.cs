@@ -1,13 +1,10 @@
-#region
 
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEditor;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor.ui
+namespace com.mitsukaki.poseengine.editor.ui
 {
     [CustomEditor(typeof(PoseEngineFactory))]
     public class FactoryEditor : UnityEditor.Editor

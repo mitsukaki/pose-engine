@@ -1,11 +1,8 @@
-#region 
 
 using UnityEngine;
 using UnityEditor;
 
-#endregion
-
-namespace com.mitsukaki.poseengine.Editor
+namespace com.mitsukaki.poseengine.editor
 {
     public static class AssetUtility
     {
