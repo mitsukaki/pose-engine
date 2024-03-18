@@ -111,7 +111,7 @@ namespace com.mitsukaki.poseengine.Editor.generators
                     );
 
                     state.motion = CreateElevatorBlendTree(pose.clips[0], pose.name);
-                    state.writeDefaultValues = false;
+                    state.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
 
                     VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/Enter");
 
@@ -147,7 +147,7 @@ namespace com.mitsukaki.poseengine.Editor.generators
 
                         mirroredState.motion = CreateElevatorBlendTree(pose.clips[0], pose.name + " (Mirrored)");
                         mirroredState.mirror = true;
-                        mirroredState.writeDefaultValues = false;
+                        mirroredState.writeDefaultValues = false; // we let ModularAvatar force it back off as needed
 
                         VRCBehaviourUtility.SetParamFlag(mirroredState, "PoseEngine/PoseState/Enter");
 

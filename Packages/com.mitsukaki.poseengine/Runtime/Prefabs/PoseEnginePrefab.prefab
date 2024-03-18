@@ -110,7 +110,7 @@ MonoBehaviour:
   layerType: 4
   deleteAttachedAnimator: 0
   pathMode: 1
-  matchAvatarWriteDefaults: 0
+  matchAvatarWriteDefaults: 1
   relativePathRoot:
     referencePath: 
   layerPriority: 0
@@ -130,7 +130,7 @@ MonoBehaviour:
   layerType: 4
   deleteAttachedAnimator: 0
   pathMode: 1
-  matchAvatarWriteDefaults: 0
+  matchAvatarWriteDefaults: 1
   relativePathRoot:
     referencePath: 
   layerPriority: 0
