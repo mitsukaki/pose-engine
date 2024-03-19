@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Control:
     name: Tracking Override
-    icon: {fileID: 2800000, guid: 059af918a629e1047ac3e48c77f4f612, type: 3}
+    icon: {fileID: 0}
     type: 103
     parameter:
       name: 
@@ -257,6 +257,36 @@ MonoBehaviour:
     saved: 0
     hasExplicitDefaultValue: 1
     m_overrideAnimatorDefaults: 1
+  - nameOrPrefix: PoseEngine/PoseState/DelayedEnter
+    remapTo: 
+    internalParameter: 0
+    isPrefix: 0
+    syncType: 3
+    localOnly: 1
+    defaultValue: 0
+    saved: 0
+    hasExplicitDefaultValue: 1
+    m_overrideAnimatorDefaults: 1
+  - nameOrPrefix: PoseEngine/ElevatorDown
+    remapTo: 
+    internalParameter: 0
+    isPrefix: 0
+    syncType: 3
+    localOnly: 1
+    defaultValue: 0
+    saved: 0
+    hasExplicitDefaultValue: 1
+    m_overrideAnimatorDefaults: 1
+  - nameOrPrefix: PoseEngine/ElevatorUp
+    remapTo: 
+    internalParameter: 0
+    isPrefix: 0
+    syncType: 3
+    localOnly: 1
+    defaultValue: 0
+    saved: 0
+    hasExplicitDefaultValue: 1
+    m_overrideAnimatorDefaults: 1
 --- !u!1 &2828816547631672129
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,6 +347,126 @@ MonoBehaviour:
   menuSource_otherObjectChildren: {fileID: 0}
   isSynced: 1
   isSaved: 1
+--- !u!1 &3139575764362837583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7062191917305734897}
+  - component: {fileID: 977577506847554987}
+  m_Layer: 0
+  m_Name: UP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7062191917305734897
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3139575764362837583}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 8466623165655552487}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &977577506847554987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3139575764362837583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b29d45007c5493d926d2cd45a489529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Control:
+    name: 
+    icon: {fileID: 0}
+    type: 101
+    parameter:
+      name: PoseEngine/ElevatorUp
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters:
+    - name: PoseEngine/Elevation
+    labels: []
+  MenuSource: 0
+  menuSource_otherObjectChildren: {fileID: 0}
+  isSynced: 1
+  isSaved: 1
+--- !u!1 &4715781404566845388
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2481567245996032445}
+  - component: {fileID: 7528100197110649578}
+  m_Layer: 0
+  m_Name: DOWN
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2481567245996032445
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4715781404566845388}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 8466623165655552487}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7528100197110649578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4715781404566845388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b29d45007c5493d926d2cd45a489529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Control:
+    name: 
+    icon: {fileID: 0}
+    type: 101
+    parameter:
+      name: PoseEngine/ElevatorDown
+    value: 1
+    style: 0
+    subMenu: {fileID: 0}
+    subParameters:
+    - name: PoseEngine/Elevation
+    labels: []
+  MenuSource: 0
+  menuSource_otherObjectChildren: {fileID: 0}
+  isSynced: 1
+  isSaved: 1
 --- !u!1 &4835191935661859843
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,7 +513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Control:
     name: Immobilize
-    icon: {fileID: 2800000, guid: bcaa549182ac36d4195820a48a1e0ae9, type: 3}
+    icon: {fileID: 0}
     type: 102
     parameter:
       name: PoseEngine/Immobile
@@ -526,11 +676,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 3450936829462571636}
-  - {fileID: 1529858741836273065}
-  - {fileID: 6881679735044137258}
-  - {fileID: 2734812854563793806}
   - {fileID: 3240499179599085773}
+  - {fileID: 6881679735044137258}
+  - {fileID: 1529858741836273065}
+  - {fileID: 3450936829462571636}
+  - {fileID: 2481567245996032445}
+  - {fileID: 2734812854563793806}
+  - {fileID: 7062191917305734897}
   m_Father: {fileID: 524211537224299997}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2008288873216582900

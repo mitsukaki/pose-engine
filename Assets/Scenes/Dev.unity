@@ -131,10 +131,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3813973895529122466, guid: ad80c516d1915004695018ca6cd579d3,
+        type: 3}
+      propertyPath: blueprintId
+      value: avtr_006522f4-bd05-49b8-b957-e12be863ed9f
+      objectReference: {fileID: 0}
     - target: {fileID: 3813973895529122467, guid: ad80c516d1915004695018ca6cd579d3,
         type: 3}
       propertyPath: m_Name
       value: Test Avatar
+      objectReference: {fileID: 0}
+    - target: {fileID: 3813973895529122493, guid: ad80c516d1915004695018ca6cd579d3,
+        type: 3}
+      propertyPath: unityVersion
+      value: 2022.3.6f1
       objectReference: {fileID: 0}
     - target: {fileID: 3813973895529122495, guid: ad80c516d1915004695018ca6cd579d3,
         type: 3}

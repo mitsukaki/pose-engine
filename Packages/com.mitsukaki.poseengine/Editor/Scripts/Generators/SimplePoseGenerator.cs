@@ -116,7 +116,7 @@ namespace com.mitsukaki.poseengine.editor.generators
                     state.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
 
                     VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
-                    VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/Enter");
+                    VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/DelayedEnter");
 
                     var enablingTransition = rootState.AddTransition(state);
                     var disablingTransition = state.AddTransition(rootState);
@@ -169,7 +169,7 @@ namespace com.mitsukaki.poseengine.editor.generators
                         mirroredState.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
 
                         VRCBehaviourUtility.SetParam(mirroredState, "PoseEngine/Pose", 0);
-                        VRCBehaviourUtility.SetParamFlag(mirroredState, "PoseEngine/PoseState/Enter");
+                        VRCBehaviourUtility.SetParamFlag(mirroredState, "PoseEngine/PoseState/DelayedEnter");
 
                         var mirrorTransition = state.AddTransition(mirroredState);
                         var unMirrorTransition = mirroredState.AddTransition(state);
