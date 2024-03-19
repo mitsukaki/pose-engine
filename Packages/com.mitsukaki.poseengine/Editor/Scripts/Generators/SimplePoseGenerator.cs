@@ -99,7 +99,7 @@ namespace com.mitsukaki.poseengine.editor.generators
                     else poseMenuItem.name = pose.name;
 
                     poseMenuItem.icon = pose.icon;
-                    poseMenuItem.type = VRCExpressionsMenu.Control.ControlType.Button;
+                    poseMenuItem.type = VRCExpressionsMenu.Control.ControlType.Toggle;
                     poseMenuItem.value = stateIndex;
                     poseMenuItem.parameter = new VRCExpressionsMenu.Control.Parameter();
                     poseMenuItem.parameter.name = "PoseEngine/Pose";
@@ -115,10 +115,12 @@ namespace com.mitsukaki.poseengine.editor.generators
                     state.motion = CreateElevatorBlendTree(pose.clips[0], pose.name);
                     state.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
 
+                    VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
                     VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/Enter");
 
                     var enablingTransition = rootState.AddTransition(state);
                     var disablingTransition = state.AddTransition(rootState);
+                    var swappingPoseExitTransition = state.AddTransition(rootState);
 
                     enablingTransition.hasExitTime = false;
                     enablingTransition.duration = 0.25f;
@@ -133,11 +135,21 @@ namespace com.mitsukaki.poseengine.editor.generators
                     disablingTransition.duration = 0.25f;
                     disablingTransition.hasFixedDuration = true;
                     disablingTransition.AddCondition(
+                        AnimatorConditionMode.Equals,
+                        255,
+                        "PoseEngine/Pose"
+                    );
+
+                    swappingPoseExitTransition.hasExitTime = false;
+                    swappingPoseExitTransition.duration = 0.05f;
+                    swappingPoseExitTransition.hasFixedDuration = true;
+                    swappingPoseExitTransition.AddCondition(
                         AnimatorConditionMode.NotEqual,
                         stateIndex,
                         "PoseEngine/Pose"
                     );
-                    disablingTransition.AddCondition(
+
+                    swappingPoseExitTransition.AddCondition(
                         AnimatorConditionMode.NotEqual,
                         0,
                         "PoseEngine/Pose"
@@ -156,11 +168,13 @@ namespace com.mitsukaki.poseengine.editor.generators
                         mirroredState.mirror = true;
                         mirroredState.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
 
+                        VRCBehaviourUtility.SetParam(mirroredState, "PoseEngine/Pose", 0);
                         VRCBehaviourUtility.SetParamFlag(mirroredState, "PoseEngine/PoseState/Enter");
 
                         var mirrorTransition = state.AddTransition(mirroredState);
                         var unMirrorTransition = mirroredState.AddTransition(state);
                         var mirrorDisablingTransition = mirroredState.AddTransition(rootState);
+                        var mirrorSwappingPoseExitTransition = mirroredState.AddTransition(rootState);
 
                         mirrorTransition.hasExitTime = true;
                         mirrorTransition.hasFixedDuration = true;
@@ -183,14 +197,24 @@ namespace com.mitsukaki.poseengine.editor.generators
                         );
 
                         mirrorDisablingTransition.hasExitTime = false;
+                        mirrorDisablingTransition.hasFixedDuration = true;
                         mirrorDisablingTransition.duration = 0.25f;
                         mirrorDisablingTransition.AddCondition(
+                            AnimatorConditionMode.Equals,
+                            255,
+                            "PoseEngine/Pose"
+                        );
+
+                        mirrorSwappingPoseExitTransition.hasExitTime = false;
+                        mirrorSwappingPoseExitTransition.hasFixedDuration = true;
+                        mirrorSwappingPoseExitTransition.duration = 0.05f;
+                        mirrorSwappingPoseExitTransition.AddCondition(
                             AnimatorConditionMode.NotEqual,
                             stateIndex,
                             "PoseEngine/Pose"
                         );
 
-                        mirrorDisablingTransition.AddCondition(
+                        mirrorSwappingPoseExitTransition.AddCondition(
                             AnimatorConditionMode.NotEqual,
                             0,
                             "PoseEngine/Pose"
