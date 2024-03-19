@@ -127,6 +127,7 @@ namespace com.mitsukaki.poseengine.editor
             AnimatorState poseState;
 
             animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
+            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
             animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
             animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
                 AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
