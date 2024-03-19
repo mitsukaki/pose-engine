@@ -5,7 +5,7 @@ namespace com.mitsukaki.poseengine
 {
     public class PoseEngineFactory : MonoBehaviour, IEditorOnly
     {
-        public string version = "0.2.0";
+        public string version = "0.2.1";
 
         public string rootMenuName = "Pose Engine";
 

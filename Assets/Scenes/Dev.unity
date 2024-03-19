@@ -141,6 +141,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Test Avatar
       objectReference: {fileID: 0}
+    - target: {fileID: 3813973895529122492, guid: ad80c516d1915004695018ca6cd579d3,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 1fa5959f599cc3d438bf9724310734eb, type: 2}
     - target: {fileID: 3813973895529122493, guid: ad80c516d1915004695018ca6cd579d3,
         type: 3}
       propertyPath: unityVersion
