@@ -123,6 +123,60 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &198305336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 198305337}
+  - component: {fileID: 198305338}
+  m_Layer: 0
+  m_Name: Test Folder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &198305337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 198305336}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1905210986}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &198305338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 198305336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fff86cd2950d84b966f55ad4bab29a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poses:
+  - name: Crouch2
+    icon: {fileID: 2800000, guid: 814f834716bbd934e8a1f728d98516ec, type: 3}
+    clip: {fileID: 7400000, guid: 37bd51a360c96584b9a3ab6e906549a2, type: 2}
+  - name: Lay Down Back2
+    icon: {fileID: 0}
+    clip: {fileID: 7400000, guid: 3b8e448cb432cc94e8fce993061cb30e, type: 2}
+  - name: Lay Down Side2
+    icon: {fileID: 0}
+    clip: {fileID: 7400000, guid: 0cde9a7f6509ecf4290b07e4f204af34, type: 2}
 --- !u!1001 &228051320
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -483,6 +537,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1863192437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1863192438}
+  - component: {fileID: 1863192439}
+  m_Layer: 0
+  m_Name: Blends
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1863192438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863192437}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1905210986}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1863192439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863192437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a18685b2693a74c937982d32b0170c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poses: []
 --- !u!1 &1905210985
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,9 +591,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1905210986}
+  - component: {fileID: 1905210988}
   - component: {fileID: 1905210987}
   m_Layer: 0
-  m_Name: == Locomotion ==
+  m_Name: Pose Engine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -512,7 +612,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 198305337}
+  - {fileID: 1863192438}
   m_Father: {fileID: 228051322}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1905210987
@@ -527,21 +629,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30fff86cd2950d84b966f55ad4bab29a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebug: 0
-  path: 
   poses:
-  - showDebug: 0
-    name: Crouch
+  - name: Crouch
     icon: {fileID: 0}
     clip: {fileID: 7400000, guid: 37bd51a360c96584b9a3ab6e906549a2, type: 2}
-  - showDebug: 0
-    name: Lay Down Back
+  - name: Lay Down Back
     icon: {fileID: 0}
     clip: {fileID: 7400000, guid: 3b8e448cb432cc94e8fce993061cb30e, type: 2}
-  - showDebug: 0
-    name: Lay Down Side
+  - name: Lay Down Side
     icon: {fileID: 0}
     clip: {fileID: 7400000, guid: 0cde9a7f6509ecf4290b07e4f204af34, type: 2}
+--- !u!114 &1905210988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1905210985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9a4f16140ee4fa459e7b62d7ce9da8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuName: 
 --- !u!1 &2113153314
 GameObject:
   m_ObjectHideFlags: 0

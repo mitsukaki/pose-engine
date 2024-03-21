@@ -12,8 +12,6 @@ namespace com.mitsukaki.poseengine
 
     public class PoseEngineFactory : MonoBehaviour, IEditorOnly
     {
-        public string version = "0.3.0-beta.2";
-
         public string rootMenuName = "Pose Engine";
 
         public bool deleteNameIfIconSet = false;
