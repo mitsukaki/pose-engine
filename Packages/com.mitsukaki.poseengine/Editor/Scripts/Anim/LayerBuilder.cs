@@ -8,6 +8,34 @@ namespace com.mitsukaki.poseengine.editor.anim
     public partial class Builder
     {
         /// <summary>
+        /// Gets the layer with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the layer to retrieve.</param>
+        /// <returns>The layer with the specified name.</returns>
+        public AnimatorControllerLayer GetLayer(string name)
+        {
+            foreach (var layer in controller.layers)
+            {
+                if (layer.name == name)
+                {
+                    return layer;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the layer at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the layer to retrieve.</param>
+        /// <returns>The layer at the specified index.</returns>
+        public AnimatorControllerLayer GetLayer(int index)
+        {
+            return controller.layers[index];
+        }
+
+        /// <summary>
         /// Creates a new AnimatorController layer.
         /// </summary>
         /// <param name="name">The name to assign to the added layer.</param>

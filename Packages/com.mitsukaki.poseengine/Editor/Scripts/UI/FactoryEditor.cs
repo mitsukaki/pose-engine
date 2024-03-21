@@ -78,7 +78,7 @@ namespace com.mitsukaki.poseengine.editor.ui
                 int componentCount = 0;
 
                 // count the number of PE_SimplePoseList components
-                componentCount += (target as PoseEngineFactory).avatar.GetComponentsInChildren<PE_SimplePoseList>().Length;
+                componentCount += (target as PoseEngineFactory).avatar.GetComponentsInChildren<PESimplePoseList>().Length;
 
                 // if there are no components
                 if (componentCount == 0)

@@ -51,8 +51,16 @@ namespace com.mitsukaki.poseengine.editor
             // Build the control layer
             BuildControlLayer(animBuilder);
 
+            // Create the build context
+            var poseBuildContext = new PoseBuildContext(
+                avatarRoot, poseEngineInstance, animBuilder, poseMenu, factory
+            );
+
             // Run the pose animation generators
-            ExecuteGenerators(animBuilder, avatarRoot, poseMenu, factory);
+            ExecuteGenerators(poseBuildContext);
+
+            // Skin the menu
+            ApplyMenuSkin(poseBuildContext);
 
             // Apply the animator to the animator merger
             var animatorMerger = FindAnimatorMerger(
@@ -121,43 +129,27 @@ namespace com.mitsukaki.poseengine.editor
             AssetDatabase.SaveAssets();
         }
 
-        private void BuildPoseLayer(anim.Builder animBuilder)
-        {
-            AnimatorControllerLayer poseLayer;
-            AnimatorState poseState;
-
-            animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
-            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
-            animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
-            animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
-                AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
-            ), poseLayer);
-            
-            animBuilder.AddDefaultState("PoseEngine_Inactive", poseLayer, out poseState);
-            VRCBehaviourUtility.SetParamFlag(poseState, "PoseEngine/PoseState/Exit");
-        }
-
         private AnimatorController ExecuteGenerators(
-            anim.Builder animBuilder,
-            GameObject avatarRoot,
-            VRCExpressionsMenu poseMenu,
-            PoseEngineFactory factory
+            PoseBuildContext poseBuildContext
         )
         {
-            // Build the pose layer
-            BuildPoseLayer(animBuilder);
-
-            // Create the build context
-            var poseBuildContext = new PoseBuildContext(
-                avatarRoot, animBuilder, poseMenu, factory
-            );
-
-            // Run the generators
+            // Run the generator setup pass
             foreach (var generator in generators)
-            {
-                generator.Generate(poseBuildContext);
-                AssetDatabase.SaveAssets();
-            }
+                generator.Setup(poseBuildContext);
+
+            // Run the generator layer pass
+            foreach (var generator in generators)
+                generator.BuildLayers(poseBuildContext);
+
+            // Run the generator generate pass
+            foreach (var generator in generators)
+                generator.BuildStates(poseBuildContext);
+
+            // Run the generator cleanup pass
+            foreach (var generator in generators)
+                generator.CleanUp(poseBuildContext);
+
+            AssetDatabase.SaveAssets();
 
             return poseBuildContext.poseController;
         }
@@ -172,6 +164,39 @@ namespace com.mitsukaki.poseengine.editor
             behaviour.goalWeight = weight;
             behaviour.blendDuration = duration;
             behaviour.debugString = debugString;
+        }
+
+        private void ApplyMenuSkin(
+            PoseBuildContext poseBuildContext
+        )
+        {
+            if (poseBuildContext.factory.skinIcons == null) return;
+
+            var menuContainer = poseBuildContext
+                .poseEngineInstance.transform.GetChild(0);
+
+            var skinIcons = poseBuildContext.factory.skinIcons;
+            foreach (var skinIcon in skinIcons)
+            {
+                // if a skin icon or name is not set, skip
+                if (skinIcon.icon == null || skinIcon.name == null)
+                {
+                    Debug.Log("[PoseEngine] Skin icon or name is not set...");
+                    continue;
+                }
+
+                // find the menu item
+                var menuItem = menuContainer.Find(skinIcon.name);
+                if (menuItem == null) {
+                    Debug.Log("[PoseEngine] Failed to find menu item: " + skinIcon.name);
+                    continue;
+                }
+
+                // apply the icon
+                menuItem.GetComponent<ModularAvatarMenuItem>().Control.icon = skinIcon.icon;
+                if (poseBuildContext.factory.deleteNameIfIconSet)
+                    menuItem.GetComponent<ModularAvatarMenuItem>().name = "";
+            }
         }
 
         private VRCExpressionsMenu CreatePoseMenu(

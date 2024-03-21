@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
 
+using static com.mitsukaki.poseengine.editor.anim.Condition;
+
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
@@ -10,22 +12,155 @@ namespace com.mitsukaki.poseengine.editor.generators
 {
     public class SimplePoseGenerator : IPoseGenerator
     {
-        public void Generate(PoseBuildContext context)
+        public void Setup(PoseBuildContext context)
         {
-            ProcessSimplePoseComponents(
-                context.avatarRoot,
-                context.poseController,
-                context.poseMenu,
-                context.factory
-            );
+            
         }
 
+        /// <summary>
+        /// Clean up the layers for the simple pose generator.
+        /// </summary>
+        /// <param name="context">The pose build context.</param>
+        /// <returns></returns>
+        public void CleanUp(PoseBuildContext context)
+        {
+            
+        }
+
+        /// <summary>
+        /// Build the layers for the simple pose generator.
+        /// </summary>
+        /// <param name="context">The pose build context.</param>
+        /// <returns></returns>
+        public void BuildLayers(PoseBuildContext context)
+        {
+            AnimatorControllerLayer poseLayer;
+            AnimatorState poseState;
+
+            var animBuilder = context.poseController;
+
+            animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
+            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
+            animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
+            animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
+                AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
+            ), poseLayer);
+
+            animBuilder.AddDefaultState("PoseEngine_Inactive", poseLayer, out poseState);
+            VRCBehaviourUtility.SetParamFlag(poseState, "PoseEngine/PoseState/Exit");
+        }
+
+        /// <summary>
+        /// Build the states for the simple pose generator.
+        /// </summary>
+        /// <param name="context">The pose build context.</param>
+        /// <returns></returns>
+        public void BuildStates(PoseBuildContext context)
+        {
+            var compList = context.avatarRoot
+                .GetComponentsInChildren<PESimplePoseList>();
+
+            Debug.Log("[PoseEngine] Processing " + compList.Length + " Simple Pose List components");
+
+            int stateIndex = 1;
+            foreach (var comp in compList)
+            {
+                foreach (var pose in comp.poses)
+                {
+                    // create the pose menu item
+                    var poseMenuItem = new VRCExpressionsMenu.Control();
+
+                    if (context.factory.deleteNameIfIconSet && pose.icon != null)
+                        poseMenuItem.name = "";
+                    else poseMenuItem.name = pose.name;
+
+                    poseMenuItem.icon = pose.icon;
+                    poseMenuItem.type = VRCExpressionsMenu.Control.ControlType.Toggle;
+                    poseMenuItem.value = stateIndex;
+                    poseMenuItem.parameter = new VRCExpressionsMenu.Control.Parameter();
+                    poseMenuItem.parameter.name = "PoseEngine/Pose";
+
+                    context.poseMenu.controls.Add(poseMenuItem);
+
+                    PopulateSimplePoseLayer(
+                        compList.Length, context, pose, stateIndex
+                    );
+
+                    stateIndex += 2;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create a new animation clip that moves the root transform so that the head is centered
+        /// on the X-Y plane.
+        /// </summary>
+        /// <param name="clip">The clip to center</param>
+        /// <returns>The centered clip</returns>
+        private AnimationClip HeadCenterAnimation(
+            AnimationClip clip,
+            Animator animator,
+            GameObject avatarRootObject
+        )
+        {
+            // if not human, skip the processing
+            if (!animator.isHuman) return clip;
+
+            // sample the animation on the proxy at frame 0
+            var controller = animator.runtimeAnimatorController;
+            var animAvatar = animator.avatar;
+            clip.SampleAnimation(avatarRootObject, 0);
+
+            // get the distance between the head and the root
+            var headBone = animator.GetBoneTransform(HumanBodyBones.Head);
+            var rootBone = animator.GetBoneTransform(HumanBodyBones.Hips);
+
+            var distance = headBone.position - rootBone.position;
+
+            // create a new animation clip
+            var centeredClip = Object.Instantiate(clip);
+            centeredClip.name = clip.name + "_HC";
+
+            // translate the root transform on all axis
+            var xBinding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.x");
+            var yBinding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
+            var zBinding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.z");
+
+            TransposeHumanoidClipKeys(xBinding, centeredClip, distance.x);
+            TransposeHumanoidClipKeys(yBinding, centeredClip, distance.y);
+            TransposeHumanoidClipKeys(zBinding, centeredClip, distance.z);
+
+            return centeredClip;
+        }
+
+        /// <summary>
+        /// Translate the motion of a humanoid animation clip by a given amount.
+        /// </summary>
+        /// <param name="clip">The clip to translate</param>
+        /// <param name="translation">The translation to apply</param>
+        /// <returns>The translated clip</returns>
         private AnimationClip TranslateMotion(AnimationClip clip, float translation = 1.0f)
         {
             var translatedClip = Object.Instantiate(clip);
-            translatedClip.name = clip.name + " (Translated + " + translation + ")";
+            translatedClip.name = clip.name + "_T" + translation;
 
             var binding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
+            TransposeHumanoidClipKeys(binding, translatedClip, translation);
+
+            return translatedClip;
+        }
+
+        /// <summary>
+        /// Transpose the keys of a humanoid animation clip by a given translation.
+        /// </summary>
+        /// <param name="binding">The binding to transpose</param>
+        /// <param name="clip">The clip to transpose</param>
+        /// <param name="translation">The translation to apply</param>
+        /// <returns></returns>
+        private void TransposeHumanoidClipKeys(
+            EditorCurveBinding binding, AnimationClip clip, float translation
+        )
+        {
             AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
 
             // iterate over all keys and add the translation
@@ -46,13 +181,21 @@ namespace com.mitsukaki.poseengine.editor.generators
                 curve.AddKey(clip.length, translation);
             }
 
-            AnimationUtility.SetEditorCurve(translatedClip, binding, curve);
-
-            return translatedClip;
+            AnimationUtility.SetEditorCurve(clip, binding, curve);
         }
 
-        private Motion CreateElevatorBlendTree(AnimationClip clip, string name)
+        private Motion CreateElevatorBlendTree(
+            AnimationClip clip, PoseBuildContext buildContext, string name
+        )
         {
+            // correctly align the clip
+            // var correctedClip = HeadCenterAnimation(
+            //     clip,
+            //     buildContext.avatarRoot.GetComponent<Animator>(),
+            //     buildContext.avatarRoot
+            // );
+
+            // create the blend tree
             var blendTree = new BlendTree();
             blendTree.name = name;
 
@@ -65,165 +208,139 @@ namespace com.mitsukaki.poseengine.editor.generators
             return blendTree;
         }
 
-        private void ProcessSimplePoseComponents(
-            GameObject avatarRootObject,
-            AnimatorController actionAnim,
-            VRCExpressionsMenu poseMenu,
-            PoseEngineFactory factory
+        private AnimatorState MakePoseState(
+            PoseBuildContext context, AnimatorControllerLayer layer,
+            Pose pose, Vector3 position, bool isMirrored
         )
         {
-            var compList = avatarRootObject.GetComponentsInChildren<PE_SimplePoseList>();
-            Debug.Log("[PoseEngine] Processing " + compList.Length + " Simple Pose List components");
+            AnimatorState state;
+            string suffix = isMirrored ? "_M" : "";
 
-            var poseLayer = actionAnim.layers[Constants.POSE_LAYER];
-            var poseStateMachine = poseLayer.stateMachine;
+            var animBuilder = context.poseController;
+            animBuilder.AddState(
+                pose.name + suffix, layer, position, out state
+            );
 
-            var rootState = poseStateMachine.defaultState;
+            state.motion = CreateElevatorBlendTree(
+                pose.clip, context, pose.name + suffix
+            );
 
-            int stateIndex = 1;
-            foreach (var comp in compList)
-            {
-                foreach (var pose in comp.poses)
-                {
-                    if (pose.clips.Length == 0)
-                    {
-                        Debug.LogError("[PoseEngine] Pose " + pose.name + " has no clips...");
-                        continue;
-                    }
+            VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
+            VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/DelayedEnter");
 
-                    // create the pose menu item
-                    var poseMenuItem = new VRCExpressionsMenu.Control();
+            state.mirror = isMirrored;
 
-                    if (factory.deleteNameIfIconSet && pose.icon != null)
-                        poseMenuItem.name = "";
-                    else poseMenuItem.name = pose.name;
+            return state;
+        }
 
-                    poseMenuItem.icon = pose.icon;
-                    poseMenuItem.type = VRCExpressionsMenu.Control.ControlType.Toggle;
-                    poseMenuItem.value = stateIndex;
-                    poseMenuItem.parameter = new VRCExpressionsMenu.Control.Parameter();
-                    poseMenuItem.parameter.name = "PoseEngine/Pose";
+        private void CreateMirroringTransitions(
+            anim.Builder animBuilder, AnimatorState mainState,
+            AnimatorState mirrorState, AnimatorState rootState,
+            int stateIndex
+        )
+        {
+            // swap to mirror transition
+            animBuilder.StartTransition()
+                .From(mainState).To(mirrorState)
+                .SetExitTime(0.25f).SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
+                .Build();
 
-                    poseMenu.controls.Add(poseMenuItem);
+            // unswap from mirror transition
+            animBuilder.StartTransition()
+                .From(mirrorState).To(mainState)
+                .SetExitTime(0.25f).SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
+                .Build();
+        }
 
-                    // create the pose state
-                    var state = poseStateMachine.AddState(
-                        pose.name,
-                        ComputeStatePosition(stateIndex - 1, compList.Length * 2)
-                    );
+        private void CreateSwappingExitTransitions(
+            anim.Builder animBuilder, AnimatorState mainState,
+            AnimatorState mirrorState, AnimatorState rootState,
+            int stateIndex
+        )
+        {
+            // swapping pose exit transition
+            animBuilder.StartTransition()
+                .From(mainState).To(rootState)
+                .SetNoExitTime().SetFixedDuration(0.05f)
+                .When("PoseEngine/Pose", IsNotEqualTo, stateIndex)
+                .When("PoseEngine/Pose", IsNotEqualTo, 0)
+                .Build();
 
-                    state.motion = CreateElevatorBlendTree(pose.clips[0], pose.name);
-                    state.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
+            // mirror swapping pose exit transition
+            animBuilder.StartTransition()
+                .From(mirrorState).To(rootState)
+                .SetNoExitTime().SetFixedDuration(0.05f)
+                .When("PoseEngine/Pose", IsNotEqualTo, stateIndex)
+                .When("PoseEngine/Pose", IsNotEqualTo, 0)
+                .Build();
+        }
 
-                    VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
-                    VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/DelayedEnter");
+        private void CreateExitingTransitions(
+            anim.Builder animBuilder, AnimatorState mainState,
+            AnimatorState mirrorState, AnimatorState rootState,
+            int stateIndex
+        )
+        {
+            // main exiting transition
+            animBuilder.StartTransition()
+                .From(mainState).To(rootState)
+                .SetNoExitTime().SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, 255)
+                .Build();
 
-                    var enablingTransition = rootState.AddTransition(state);
-                    var disablingTransition = state.AddTransition(rootState);
-                    var swappingPoseExitTransition = state.AddTransition(rootState);
+            // mirror exiting transition
+            animBuilder.StartTransition()
+                .From(mirrorState).To(rootState)
+                .SetNoExitTime().SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, 255)
+                .Build();
+        }
+        
+        private void PopulateSimplePoseLayer(
+            int componentCount, PoseBuildContext context,
+            Pose pose, int stateIndex
+        )
+        {
+            var animBuilder = context.poseController;
 
-                    enablingTransition.hasExitTime = false;
-                    enablingTransition.duration = 0.25f;
-                    enablingTransition.hasFixedDuration = true;
-                    enablingTransition.AddCondition(
-                        AnimatorConditionMode.Equals,
-                        stateIndex,
-                        "PoseEngine/Pose"
-                    );
+            // create the pose states
+            var layer = animBuilder.GetLayer(Constants.POSE_LAYER);
+            AnimatorState mainState = MakePoseState(
+                context, layer, pose,
+                ComputeStatePosition(stateIndex - 1, componentCount * 2), false
+            );
 
-                    disablingTransition.hasExitTime = false;
-                    disablingTransition.duration = 0.25f;
-                    disablingTransition.hasFixedDuration = true;
-                    disablingTransition.AddCondition(
-                        AnimatorConditionMode.Equals,
-                        255,
-                        "PoseEngine/Pose"
-                    );
+            AnimatorState mirrorState = MakePoseState(
+                context, layer, pose,
+                ComputeStatePosition(stateIndex, componentCount * 2), true
+            );
 
-                    swappingPoseExitTransition.hasExitTime = false;
-                    swappingPoseExitTransition.duration = 0.05f;
-                    swappingPoseExitTransition.hasFixedDuration = true;
-                    swappingPoseExitTransition.AddCondition(
-                        AnimatorConditionMode.NotEqual,
-                        stateIndex,
-                        "PoseEngine/Pose"
-                    );
+            // set up transitions
+            var rootState = layer.stateMachine.defaultState;
 
-                    swappingPoseExitTransition.AddCondition(
-                        AnimatorConditionMode.NotEqual,
-                        0,
-                        "PoseEngine/Pose"
-                    );
+            // entry transition
+            animBuilder.StartTransition()
+                .From(rootState).To(mainState)
+                .SetNoExitTime().SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
+                .Build();
 
-                    // we only generate mirrors for single-clip poses
-                    if (pose.clips.Length == 1)
-                    {
-                        var mirroredState = poseStateMachine.AddState(
-                            pose.name + "_Mirror",
-                            ComputeStatePosition(stateIndex, compList.Length * 2)
-                            + new Vector3(0, 50, 0)
-                        );
+            // Create exiting transitions
+            CreateExitingTransitions(
+                animBuilder, mainState, mirrorState, rootState, stateIndex
+            );
 
-                        mirroredState.motion = CreateElevatorBlendTree(pose.clips[0], pose.name + " (Mirrored)");
-                        mirroredState.mirror = true;
-                        mirroredState.writeDefaultValues = true; // we let ModularAvatar force it back off as needed
+            // Create mirroring transitions
+            CreateMirroringTransitions(
+                animBuilder, mainState, mirrorState, rootState, stateIndex
+            );
 
-                        VRCBehaviourUtility.SetParam(mirroredState, "PoseEngine/Pose", 0);
-                        VRCBehaviourUtility.SetParamFlag(mirroredState, "PoseEngine/PoseState/DelayedEnter");
-
-                        var mirrorTransition = state.AddTransition(mirroredState);
-                        var unMirrorTransition = mirroredState.AddTransition(state);
-                        var mirrorDisablingTransition = mirroredState.AddTransition(rootState);
-                        var mirrorSwappingPoseExitTransition = mirroredState.AddTransition(rootState);
-
-                        mirrorTransition.hasExitTime = true;
-                        mirrorTransition.hasFixedDuration = true;
-                        mirrorTransition.exitTime = 0.25f;
-                        mirrorTransition.duration = 0.25f;
-                        mirrorTransition.AddCondition(
-                            AnimatorConditionMode.Equals,
-                            stateIndex,
-                            "PoseEngine/Pose"
-                        );
-
-                        unMirrorTransition.hasExitTime = true;
-                        unMirrorTransition.hasFixedDuration = true;
-                        unMirrorTransition.exitTime = 0.25f;
-                        unMirrorTransition.duration = 0.25f;
-                        unMirrorTransition.AddCondition(
-                            AnimatorConditionMode.Equals,
-                            stateIndex,
-                            "PoseEngine/Pose"
-                        );
-
-                        mirrorDisablingTransition.hasExitTime = false;
-                        mirrorDisablingTransition.hasFixedDuration = true;
-                        mirrorDisablingTransition.duration = 0.25f;
-                        mirrorDisablingTransition.AddCondition(
-                            AnimatorConditionMode.Equals,
-                            255,
-                            "PoseEngine/Pose"
-                        );
-
-                        mirrorSwappingPoseExitTransition.hasExitTime = false;
-                        mirrorSwappingPoseExitTransition.hasFixedDuration = true;
-                        mirrorSwappingPoseExitTransition.duration = 0.05f;
-                        mirrorSwappingPoseExitTransition.AddCondition(
-                            AnimatorConditionMode.NotEqual,
-                            stateIndex,
-                            "PoseEngine/Pose"
-                        );
-
-                        mirrorSwappingPoseExitTransition.AddCondition(
-                            AnimatorConditionMode.NotEqual,
-                            0,
-                            "PoseEngine/Pose"
-                        );
-                    }
-
-                    stateIndex += 2;
-                }
-            }
+            // Create swapping exit transitions
+            CreateSwappingExitTransitions(
+                animBuilder, mainState, mirrorState, rootState, stateIndex
+            );
         }
 
         private Vector3 ComputeStatePosition(int index, int itemCount)

@@ -139,5 +139,21 @@ namespace com.mitsukaki.poseengine.editor.anim
             behaviour = state.AddStateMachineBehaviour<T>();
             return this;
         }
+
+        /// <summary>
+        /// Sets the motion for an animator state.
+        /// </summary>
+        /// <param name="state">The animator state.</param>
+        /// <param name="motion">The motion to set.</param>
+        /// <returns>The builder instance.</returns>
+        public Builder SetStateMotion(
+            AnimatorState state, Motion motion,
+            bool writeDefaultValues = true
+        )
+        {
+            state.motion = motion;
+            state.writeDefaultValues = writeDefaultValues;
+            return this;
+        }
     }
 }
