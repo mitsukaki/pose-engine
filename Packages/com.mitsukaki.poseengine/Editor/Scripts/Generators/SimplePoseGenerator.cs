@@ -14,7 +14,7 @@ namespace com.mitsukaki.poseengine.editor.generators
     {
         public void Setup(PoseBuildContext context)
         {
-            
+            // ...
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace com.mitsukaki.poseengine.editor.generators
         /// <returns></returns>
         public void CleanUp(PoseBuildContext context)
         {
-            
+            // ...
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace com.mitsukaki.poseengine.editor.generators
                         compList.Length, context, pose, stateIndex
                     );
 
-                    stateIndex += 2;
+                    stateIndex++;
                 }
             }
         }
@@ -186,15 +186,8 @@ namespace com.mitsukaki.poseengine.editor.generators
 
         private Motion CreateElevatorBlendTree(
             AnimationClip clip, PoseBuildContext buildContext, string name
-        )
+        ) 
         {
-            // correctly align the clip
-            // var correctedClip = HeadCenterAnimation(
-            //     clip,
-            //     buildContext.avatarRoot.GetComponent<Animator>(),
-            //     buildContext.avatarRoot
-            // );
-
             // create the blend tree
             var blendTree = new BlendTree();
             blendTree.name = name;
@@ -297,7 +290,7 @@ namespace com.mitsukaki.poseengine.editor.generators
                 .When("PoseEngine/Pose", IsEqualTo, 255)
                 .Build();
         }
-        
+
         private void PopulateSimplePoseLayer(
             int componentCount, PoseBuildContext context,
             Pose pose, int stateIndex

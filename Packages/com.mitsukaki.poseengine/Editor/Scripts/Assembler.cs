@@ -49,7 +49,7 @@ namespace com.mitsukaki.poseengine.editor
             );
 
             // Build the control layer
-            BuildControlLayer(animBuilder);
+            SetupControlLayer(animBuilder);
 
             // Create the build context
             var poseBuildContext = new PoseBuildContext(
@@ -76,7 +76,7 @@ namespace com.mitsukaki.poseengine.editor
             animatorMerger.animator = animBuilder;
         }
 
-        private void BuildControlLayer(anim.Builder animBuilder)
+        private void SetupControlLayer(anim.Builder animBuilder)
         {
             AnimatorControllerLayer controlLayer;
             AnimatorState inactiveState, activeState;
@@ -137,11 +137,11 @@ namespace com.mitsukaki.poseengine.editor
             foreach (var generator in generators)
                 generator.Setup(poseBuildContext);
 
-            // Run the generator layer pass
+            // Run the generators generate layer pass
             foreach (var generator in generators)
                 generator.BuildLayers(poseBuildContext);
 
-            // Run the generator generate pass
+            // Run the generators generate states pass
             foreach (var generator in generators)
                 generator.BuildStates(poseBuildContext);
 
@@ -235,7 +235,7 @@ namespace com.mitsukaki.poseengine.editor
         {
             var rootMenu = poseEngineInstance.transform.GetChild(0)
                 .GetComponent<ModularAvatarMenuItem>();
-            
+
             if (rootMenu == null) {
                 Debug.LogError("[PoseEngine] Failed to find root menu...");
                 return;
