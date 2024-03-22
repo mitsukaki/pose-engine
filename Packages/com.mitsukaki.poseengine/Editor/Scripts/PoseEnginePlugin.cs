@@ -39,17 +39,19 @@ namespace com.mitsukaki.poseengine.editor
 
         protected override void Configure()
         {
-            InPhase(BuildPhase.Generating).Run("Generate/Apply pose engine", ctx =>
-            {
-                // check if avatar already has a pose engine
-                if (ctx.AvatarRootObject.transform.Find("PoseEnginePrefab") != null)
+            InPhase(BuildPhase.Generating)
+                .BeforePlugin("nadena.dev.modular-avatar")
+                .Run("Generate/Apply pose engine", ctx =>
                 {
-                    Debug.Log("[PoseEngine] Leaving the existing pose engine prefab.\nRemove the existing pose engine prefab to generate an updated one.");
-                    return;
-                }
+                    // check if avatar already has a pose engine
+                    if (ctx.AvatarRootObject.transform.Find("PoseEnginePrefab") != null)
+                    {
+                        Debug.Log("[PoseEngine] Leaving the existing pose engine prefab.\nRemove the existing pose engine prefab to generate an updated one.");
+                        return;
+                    }
 
-                Generate(ctx.AvatarRootObject);
-            });
+                    Generate(ctx.AvatarRootObject);
+                });
         }
 
         public void Generate(GameObject avatarRootObject)

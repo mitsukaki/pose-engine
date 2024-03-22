@@ -119,7 +119,8 @@ namespace com.mitsukaki.poseengine.editor.ui
                 // Run the assembler
                 var assembler = new Assembler(
                     new List<generators.IPoseGenerator>{
-                            new generators.SimplePoseGenerator()
+                        new generators.MenuGenerator(),
+                        new generators.SimplePoseGenerator()
                     }
                 );
 

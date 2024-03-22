@@ -1,23 +1,12 @@
+using System;
+
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace com.mitsukaki.poseengine
 {
-    public enum BlendPoseType { SingleClip, MultiClip };
-
-    [System.Serializable]
-    public struct BlendedPose
-    {
-        public string name;
-
-        public Texture2D icon;
-
-        public BlendPoseType type;
-
-        public List<AnimationClip> clips;
-    }
-
     public class PEBlendedPose : AGeneratorMenu
     {
         public List<BlendedPose> poses;
@@ -25,6 +14,27 @@ namespace com.mitsukaki.poseengine
         public override string GetIdentifier()
         {
             return "BlendedPose";
+        }
+
+        public override List<Pose> GetPoseList()
+        {
+            // create a new list of poses
+            List<Pose> poseList = new List<Pose>();
+
+            // iterate through the poses
+            foreach (BlendedPose pose in poses)
+                poseList.Add(pose);
+
+            return poseList;
+        }
+
+        public override void CopyTo(GameObject target)
+        {
+            // add a PEBlendedPose component to the target
+            var targetComponent = target.AddComponent<PEBlendedPose>();
+
+            // copy the poses
+            targetComponent.poses = new List<BlendedPose>(poses);
         }
     }
 }

@@ -2284,7 +2284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enterPoseSpace: 1
   fixedDelay: 1
-  delayTime: 0.24
+  delayTime: 0.21
   debugString: 
 --- !u!1102 &6595156172437966994
 AnimatorState:

@@ -19,11 +19,5 @@ namespace com.mitsukaki.poseengine
         public GameObject avatar;
 
         public SkinIcon[] skinIcons;
-
-        // function to run when inspected
-        public void OnInspect()
-        {
-            Debug.Log("YOUR MOM");
-        }
     }
 }

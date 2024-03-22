@@ -7,15 +7,19 @@ namespace com.mitsukaki.poseengine.editor.ui
     [CustomEditor(typeof(PESimplePoseList))]
     public class SimplePoseListEditor : UnityEditor.Editor
     {
+        
         private ReorderableList poseList;
+        private SerializedProperty posesProperty;
 
         private const float SPACING = 6f;
 
         private void OnEnable()
         {
+            posesProperty = serializedObject.FindProperty("poses");
+
             poseList = new ReorderableList(
                 serializedObject,
-                serializedObject.FindProperty("poses"),
+                posesProperty,
                 true, true, true, true
             );
             
@@ -25,7 +29,7 @@ namespace com.mitsukaki.poseengine.editor.ui
             };
 
             var lineHeight = EditorGUIUtility.singleLineHeight;
-            var iconWidth = lineHeight * 5;
+            var iconWidth = lineHeight * 4;
             poseList.elementHeight = iconWidth + SPACING * 2;
 
             poseList.drawElementCallback = (
@@ -35,48 +39,49 @@ namespace com.mitsukaki.poseengine.editor.ui
                 rect.y += 2;
 
                 var lineStart = rect.y;
+                var inputWidth = rect.width - rect.width * 0.2f - iconWidth - SPACING * 2.0f;
 
                 // column #1
                 // the name field
                 EditorGUI.LabelField(new Rect(
-                    rect.x, rect.y, rect.width * 0.25f, lineHeight
+                    rect.x, rect.y, rect.width * 0.2f, lineHeight
                 ), "Name");
                 EditorGUI.PropertyField(new Rect(
-                    rect.x + rect.width * 0.25f, rect.y, rect.width * 0.4f, lineHeight
-                ), element.FindPropertyRelative("name"), GUIContent.none);
+                    rect.x + rect.width * 0.2f, rect.y, inputWidth, lineHeight
+                ), element.FindPropertyRelative("Name"), GUIContent.none);
                 rect.y += lineHeight + SPACING; // Add spacing between elements
 
                 // the clip field
                 EditorGUI.LabelField(new Rect(
-                    rect.x, rect.y, rect.width * 0.25f, lineHeight
+                    rect.x, rect.y, rect.width * 0.2f, lineHeight
                 ), "Clip");
                 EditorGUI.PropertyField(new Rect(
-                    rect.x + rect.width * 0.25f, rect.y, rect.width * 0.4f, lineHeight
+                    rect.x + rect.width * 0.2f, rect.y, inputWidth, lineHeight
                 ), element.FindPropertyRelative("clip"), GUIContent.none);
                 rect.y += lineHeight + SPACING; // Add spacing between elements
 
                 // the icon field
                 EditorGUI.LabelField(new Rect(
-                    rect.x, rect.y, rect.width * 0.25f, lineHeight
+                    rect.x, rect.y, rect.width * 0.2f, lineHeight
                 ), "Icon");
                 EditorGUI.PropertyField(new Rect(
-                    rect.x + rect.width * 0.25f, rect.y, rect.width * 0.4f, lineHeight
-                ), element.FindPropertyRelative("icon"), GUIContent.none);
+                    rect.x + rect.width * 0.2f, rect.y, inputWidth, lineHeight
+                ), element.FindPropertyRelative("Icon"), GUIContent.none);
 
                 // Column #2
                 rect.y = lineStart;
-                var iconProperty = element.FindPropertyRelative("icon");
+                var iconProperty = element.FindPropertyRelative("Icon");
                 var icon = iconProperty.objectReferenceValue as Texture2D;
                 if (icon != null)
                 {
                     EditorGUI.DrawPreviewTexture(new Rect(
-                        rect.width - iconWidth, rect.y, iconWidth, iconWidth
+                        rect.width - iconWidth / 2.0f, rect.y, iconWidth, iconWidth
                     ), icon);
                 }
                 else
                 {
                     EditorGUI.LabelField(new Rect(
-                        rect.width - iconWidth, rect.y, iconWidth, iconWidth
+                        rect.width - iconWidth / 3.0f, rect.y, iconWidth, iconWidth
                     ), "No Icon");
                 }
 

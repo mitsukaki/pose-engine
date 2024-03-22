@@ -1,6 +1,9 @@
 using UnityEngine;
+
 using System;
 using System.Collections;
+using System.Collections.Generic;
+
 using VRC.SDKBase;
 
 namespace com.mitsukaki.poseengine
@@ -9,5 +12,8 @@ namespace com.mitsukaki.poseengine
     {
         public abstract string GetIdentifier();
 
+        public abstract List<Pose> GetPoseList();
+
+        public abstract void CopyTo(GameObject target);
     }
 }

@@ -35,13 +35,6 @@ namespace com.mitsukaki.poseengine.editor
                 Constants.TEMPLATE_ASSET_GUID
             );
 
-            // Create the pose menu
-            var poseMenu = CreatePoseMenu(poseEngineInstance, factory);
-            if (poseMenu == null) {
-                Debug.LogError("[PoseEngine] Failed to create pose menu.");
-                return;
-            }
-
             // Create the animator controller
             var animBuilder = anim.Builder.CreateSerialized(
                 "Assets/PoseEngine/Generated/"
@@ -53,7 +46,7 @@ namespace com.mitsukaki.poseengine.editor
 
             // Create the build context
             var poseBuildContext = new PoseBuildContext(
-                avatarRoot, poseEngineInstance, animBuilder, poseMenu, factory
+                avatarRoot, poseEngineInstance, animBuilder, factory
             );
 
             // Run the pose animation generators
@@ -199,35 +192,6 @@ namespace com.mitsukaki.poseengine.editor
             }
         }
 
-        private VRCExpressionsMenu CreatePoseMenu(
-            GameObject poseEngineInstance,
-            PoseEngineFactory factory
-        )
-        {
-            // Set the root menu name
-            SetRootMenuName(poseEngineInstance, factory.rootMenuName);
-
-            // Get the pose menu installer
-            var poseMenuInstaller = CreatePoseMenuInstaller(
-                poseEngineInstance, "Poses"
-            );
-
-            if (poseMenuInstaller == null) {
-                Debug.LogError("[PoseEngine] Failed to create pose menu installer...");
-                return null;
-            }
-
-            // Create the pose menu
-            var poseMenu = AssetUtility.CreateSerializedClone(
-                ScriptableObject.CreateInstance<VRCExpressionsMenu>()
-            ) as VRCExpressionsMenu;
-
-            // Apply the pose menu to the pose menu installer
-            poseMenuInstaller.Control.subMenu = poseMenu;
-
-            return poseMenu;
-        }
-
         private void SetRootMenuName(
             GameObject poseEngineInstance,
             string menuName
@@ -242,34 +206,6 @@ namespace com.mitsukaki.poseengine.editor
             }
 
             rootMenu.name = menuName;
-        }
-
-        private ModularAvatarMenuItem CreatePoseMenuInstaller(
-            GameObject poseEngineInstance,
-            string menuName
-        )
-        {
-            // find the pose menu container
-            var poseObj = poseEngineInstance.transform.GetChild(0).Find("Poses");
-            if (poseObj == null) {
-                Debug.LogError("[PoseEngine] Failed to find pose menu container...");
-                return null;
-            }
-
-            // get the pose menu installer
-            var poseMenuInstaller = poseObj.GetComponent<ModularAvatarMenuItem>();
-            poseMenuInstaller.name = menuName;
-            if (poseMenuInstaller == null) {
-                Debug.LogError("[PoseEngine] Failed to find pose menu installer...");
-                return null;
-            }
-
-            // apply the pose menu
-            poseMenuInstaller.Control = new VRCExpressionsMenu.Control();
-            poseMenuInstaller.Control.type = VRCExpressionsMenu.Control.ControlType.SubMenu;
-            poseMenuInstaller.Control.name = "Poses";
-
-            return poseMenuInstaller;
         }
 
         private ModularAvatarMergeAnimator FindAnimatorMerger(

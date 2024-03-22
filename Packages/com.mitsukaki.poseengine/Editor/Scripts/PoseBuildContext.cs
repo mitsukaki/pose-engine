@@ -17,22 +17,18 @@ namespace com.mitsukaki.poseengine.editor
 
         public Builder poseController;
 
-        public VRCExpressionsMenu poseMenu;
-
         public PoseEngineFactory factory;
 
         public PoseBuildContext(
             GameObject avatarRoot,
             GameObject poseEngineInstance,
             Builder poseController,
-            VRCExpressionsMenu poseMenu,
             PoseEngineFactory factory
         )
         {
             this.avatarRoot = avatarRoot;
             this.poseEngineInstance = poseEngineInstance;
             this.poseController = poseController;
-            this.poseMenu = poseMenu;
             this.factory = factory;
         }
     }

@@ -7,10 +7,10 @@ using VRC.SDKBase;
 
 namespace com.mitsukaki.poseengine
 {
-    public class PEMenu : MonoBehaviour, IEditorOnly
+    public class PEMenuFolder : MonoBehaviour, IEditorOnly
     {
-        public string menuName;
+        public string Name;
 
-        public Texture2D icon;
+        public Texture2D Icon;
     }
 }

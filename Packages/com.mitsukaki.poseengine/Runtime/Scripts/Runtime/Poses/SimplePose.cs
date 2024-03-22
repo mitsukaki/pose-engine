@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,10 +8,9 @@ using VRC.SDKBase;
 
 namespace com.mitsukaki.poseengine
 {
-    public class PEMenu : MonoBehaviour, IEditorOnly
+    [System.Serializable]
+    public class SimplePose : Pose
     {
-        public string menuName;
-
-        public Texture2D icon;
+        public AnimationClip clip;
     }
 }

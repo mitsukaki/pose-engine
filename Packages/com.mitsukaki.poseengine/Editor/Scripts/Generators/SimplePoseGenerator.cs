@@ -57,7 +57,7 @@ namespace com.mitsukaki.poseengine.editor.generators
         /// <returns></returns>
         public void BuildStates(PoseBuildContext context)
         {
-            var compList = context.avatarRoot
+            var compList = context.poseEngineInstance
                 .GetComponentsInChildren<PESimplePoseList>();
 
             Debug.Log("[PoseEngine] Processing " + compList.Length + " Simple Pose List components");
@@ -67,21 +67,6 @@ namespace com.mitsukaki.poseengine.editor.generators
             {
                 foreach (var pose in comp.poses)
                 {
-                    // create the pose menu item
-                    var poseMenuItem = new VRCExpressionsMenu.Control();
-
-                    if (context.factory.deleteNameIfIconSet && pose.icon != null)
-                        poseMenuItem.name = "";
-                    else poseMenuItem.name = pose.name;
-
-                    poseMenuItem.icon = pose.icon;
-                    poseMenuItem.type = VRCExpressionsMenu.Control.ControlType.Toggle;
-                    poseMenuItem.value = stateIndex;
-                    poseMenuItem.parameter = new VRCExpressionsMenu.Control.Parameter();
-                    poseMenuItem.parameter.name = "PoseEngine/Pose";
-
-                    context.poseMenu.controls.Add(poseMenuItem);
-
                     PopulateSimplePoseLayer(
                         compList.Length, context, pose, stateIndex
                     );
@@ -203,7 +188,7 @@ namespace com.mitsukaki.poseengine.editor.generators
 
         private AnimatorState MakePoseState(
             PoseBuildContext context, AnimatorControllerLayer layer,
-            Pose pose, Vector3 position, bool isMirrored
+            SimplePose pose, Vector3 position, bool isMirrored
         )
         {
             AnimatorState state;
@@ -211,11 +196,11 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             var animBuilder = context.poseController;
             animBuilder.AddState(
-                pose.name + suffix, layer, position, out state
+                pose.Name + suffix, layer, position, out state
             );
 
             state.motion = CreateElevatorBlendTree(
-                pose.clip, context, pose.name + suffix
+                pose.clip, context, pose.Name + suffix
             );
 
             VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
@@ -293,7 +278,7 @@ namespace com.mitsukaki.poseengine.editor.generators
 
         private void PopulateSimplePoseLayer(
             int componentCount, PoseBuildContext context,
-            Pose pose, int stateIndex
+            SimplePose pose, int stateIndex
         )
         {
             var animBuilder = context.poseController;
