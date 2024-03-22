@@ -58,6 +58,7 @@ namespace com.mitsukaki.poseengine.editor
         {
             var assembler = new Assembler(
                 new List<IPoseGenerator>{
+                    new MenuGenerator(),
                     new SimplePoseGenerator()
                 }
             );

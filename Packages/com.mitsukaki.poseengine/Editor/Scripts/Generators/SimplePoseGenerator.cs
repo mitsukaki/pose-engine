@@ -62,18 +62,9 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             Debug.Log("[PoseEngine] Processing " + compList.Length + " Simple Pose List components");
 
-            int stateIndex = 1;
             foreach (var comp in compList)
-            {
                 foreach (var pose in comp.poses)
-                {
-                    PopulateSimplePoseLayer(
-                        compList.Length, context, pose, stateIndex
-                    );
-
-                    stateIndex++;
-                }
-            }
+                    PopulateSimplePoseLayer(compList.Length, context, pose);
         }
 
         /// <summary>
@@ -277,10 +268,10 @@ namespace com.mitsukaki.poseengine.editor.generators
         }
 
         private void PopulateSimplePoseLayer(
-            int componentCount, PoseBuildContext context,
-            SimplePose pose, int stateIndex
+            int componentCount, PoseBuildContext context, SimplePose pose
         )
         {
+            int stateIndex = pose.PoseID;
             var animBuilder = context.poseController;
 
             // create the pose states

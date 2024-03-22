@@ -633,7 +633,7 @@ MonoBehaviour:
   Control:
     name: 
     icon: {fileID: 0}
-    type: 101
+    type: 103
     parameter:
       name: 
     value: 1
@@ -641,8 +641,8 @@ MonoBehaviour:
     subMenu: {fileID: 0}
     subParameters: []
     labels: []
-  MenuSource: 0
-  menuSource_otherObjectChildren: {fileID: 0}
+  MenuSource: 1
+  menuSource_otherObjectChildren: {fileID: 6898516920041004012}
   isSynced: 1
   isSaved: 1
 --- !u!1 &7799959254746490454

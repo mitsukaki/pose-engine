@@ -14,13 +14,13 @@ namespace com.mitsukaki.poseengine.editor.generators
         public void Setup(PoseBuildContext context)
         {
             var poseContainer = context.poseEngineInstance.transform
-                        .GetChild(0).Find("Poses");
+                .GetChild(0).Find("Poses");
         
             // Get all the AGeneratorMenu components
             var menuComponents = context.avatarRoot.GetComponentsInChildren<AGeneratorMenu>();
 
             // give all the poses an unique ID
-            int poseIndex = 0;
+            int poseIndex = 1;
             foreach (var menuComp in menuComponents)
             {
                 foreach (var pose in menuComp.GetPoseList())
