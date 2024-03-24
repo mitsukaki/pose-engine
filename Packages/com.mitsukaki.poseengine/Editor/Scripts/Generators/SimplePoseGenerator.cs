@@ -286,12 +286,12 @@ namespace com.mitsukaki.poseengine.editor.generators
             var layer = animBuilder.GetLayer(Constants.POSE_LAYER);
             AnimatorState mainState = MakePoseState(
                 context, layer, pose,
-                ComputeStatePosition(stateIndex - 1, componentCount * 2), false
+                ComputeStatePosition(stateIndex * 2, componentCount * 2), false
             );
 
             AnimatorState mirrorState = MakePoseState(
                 context, layer, pose,
-                ComputeStatePosition(stateIndex, componentCount * 2), true
+                ComputeStatePosition(stateIndex * 2 + 1, componentCount * 2), true
             );
 
             // set up transitions
