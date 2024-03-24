@@ -272,6 +272,71 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &725896177
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 725896178}
+  - component: {fileID: 725896180}
+  - component: {fileID: 725896179}
+  m_Layer: 0
+  m_Name: Test Folder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &725896178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725896177}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1336756099}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &725896179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725896177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fff86cd2950d84b966f55ad4bab29a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poses:
+  - PoseID: 4
+    Name: HYAPY ye
+    Icon: {fileID: 2800000, guid: 625208581436a674a82ac9660eeb2ce1, type: 3}
+    lockFeetOnEntry: 1
+    clip: {fileID: 7400000, guid: 44166cc55ecc30b48a0b71f6a626cdb6, type: 2}
+--- !u!114 &725896180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725896177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbc0feaf78f8048ab0b935516766c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: 
+  Icon: {fileID: 2800000, guid: 814f834716bbd934e8a1f728d98516ec, type: 3}
 --- !u!1001 &800220120
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -335,6 +400,61 @@ PrefabInstance:
       propertyPath: avatar
       value: 
       objectReference: {fileID: 1181426612}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: deleteNameIfIconSet
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[0].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 10a097b0c8bf6444cbd4c1344e574a06, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: caa207da60c29734dac6da07797e292b, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 2eb6763eb24d87542ac4c27aa71097bc, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[4].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 814f834716bbd934e8a1f728d98516ec, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[5].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: caa207da60c29734dac6da07797e292b, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[6].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 625208581436a674a82ac9660eeb2ce1, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[7].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 814f834716bbd934e8a1f728d98516ec, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[8].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: c682c09612002e04a9e54b7355521ede, type: 3}
+    - target: {fileID: 6011862446033439903, guid: 81b2de15fa18fe44eb46d690d679efed,
+        type: 3}
+      propertyPath: skinIcons.Array.data[10].icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 625208581436a674a82ac9660eeb2ce1, type: 3}
     - target: {fileID: 7915159162107688357, guid: 81b2de15fa18fe44eb46d690d679efed,
         type: 3}
       propertyPath: m_Name
@@ -381,7 +501,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 725896178}
   m_Father: {fileID: 1950592428}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1336756100
@@ -397,17 +518,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poses:
-  - PoseID: 0
+  - PoseID: 1
     Name: Crouch
     Icon: {fileID: 2800000, guid: 4323cb5141ed5b24f80c4ff887a46f9e, type: 3}
+    lockFeetOnEntry: 1
     clip: {fileID: 7400000, guid: 37bd51a360c96584b9a3ab6e906549a2, type: 2}
-  - PoseID: 1
-    Name: Laydown Back
-    Icon: {fileID: 0}
-    clip: {fileID: 7400000, guid: 3b8e448cb432cc94e8fce993061cb30e, type: 2}
   - PoseID: 2
+    Name: Laydown Back
+    Icon: {fileID: 2800000, guid: 625208581436a674a82ac9660eeb2ce1, type: 3}
+    lockFeetOnEntry: 1
+    clip: {fileID: 7400000, guid: 3b8e448cb432cc94e8fce993061cb30e, type: 2}
+  - PoseID: 3
     Name: Laydown Side
-    Icon: {fileID: 0}
+    Icon: {fileID: 2800000, guid: 17239c3cb17918144b2765b0020bccde, type: 3}
+    lockFeetOnEntry: 1
     clip: {fileID: 7400000, guid: 0cde9a7f6509ecf4290b07e4f204af34, type: 2}
 --- !u!114 &1336756101
 MonoBehaviour:

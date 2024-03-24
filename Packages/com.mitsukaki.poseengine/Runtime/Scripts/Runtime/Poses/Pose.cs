@@ -15,5 +15,7 @@ namespace com.mitsukaki.poseengine
         public string Name;
 
         public Texture2D Icon;
+
+        public bool lockFeetOnEntry = true;
     }
 }

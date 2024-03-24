@@ -41,6 +41,7 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
             animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
+            animBuilder.AddParameter("PoseEngine/Lock/Feet", anim.Builder.BoolParam);
             animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
             animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
                 AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
@@ -184,6 +185,13 @@ namespace com.mitsukaki.poseengine.editor.generators
         {
             AnimatorState state;
             string suffix = isMirrored ? "_M" : "";
+
+            // lock feet on entry if needed
+            if (!isMirrored && pose.lockFeetOnEntry)
+                VRCBehaviourUtility.SetParamFlag(
+                    layer.stateMachine.defaultState,
+                    "PoseEngine/Lock/Feet"
+                );
 
             var animBuilder = context.poseController;
             animBuilder.AddState(

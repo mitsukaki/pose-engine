@@ -62,3 +62,11 @@ MonoBehaviour:
     icon: {fileID: 0}
   - name: UP
     icon: {fileID: 0}
+  - name: Tracking Override/Disable Feet
+    icon: {fileID: 0}
+  - name: Tracking Override/Disable Hips
+    icon: {fileID: 0}
+  - name: Tracking Override/Disable Hands
+    icon: {fileID: 0}
+  - name: Tracking Override/Disable Head
+    icon: {fileID: 0}

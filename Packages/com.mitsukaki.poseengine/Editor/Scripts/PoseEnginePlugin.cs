@@ -50,6 +50,13 @@ namespace com.mitsukaki.poseengine.editor
                         return;
                     }
 
+                    // check if avatar has any AGeneratorMenu components
+                    if (ctx.AvatarRootObject.GetComponentsInChildren<AGeneratorMenu>().Length == 0)
+                    {
+                        Debug.Log("[PoseEngine] No AGeneratorMenu components found. Skipping pose engine generation.");
+                        return;
+                    }
+
                     Generate(ctx.AvatarRootObject);
                 });
         }
