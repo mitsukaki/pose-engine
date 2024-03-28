@@ -186,13 +186,6 @@ namespace com.mitsukaki.poseengine.editor.generators
             AnimatorState state;
             string suffix = isMirrored ? "_M" : "";
 
-            // lock feet on entry if needed
-            if (!isMirrored && pose.lockFeetOnEntry)
-                VRCBehaviourUtility.SetParamFlag(
-                    layer.stateMachine.defaultState,
-                    "PoseEngine/Lock/Feet"
-                );
-
             var animBuilder = context.poseController;
             animBuilder.AddState(
                 pose.Name + suffix, layer, position, out state
@@ -202,8 +195,14 @@ namespace com.mitsukaki.poseengine.editor.generators
                 pose.clip, context, pose.Name + suffix
             );
 
+            // set the parameter drivers
             VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
             VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/DelayedEnter");
+
+            // lock feet on entry if needed
+            // TODO: disable hard lock on this being true
+            if (!isMirrored && pose.lockFeetOnEntry || true)
+                VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/Lock/Feet");
 
             state.mirror = isMirrored;
 
