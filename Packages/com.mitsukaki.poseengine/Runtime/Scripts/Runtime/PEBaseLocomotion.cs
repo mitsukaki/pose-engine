@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEditor.Animations;
 
 using System;
 using System.Collections;
@@ -11,6 +10,6 @@ namespace com.mitsukaki.poseengine
 {
     public class PEBaseLocomotion : MonoBehaviour, IEditorOnly
     {
-        public AnimatorController BaseLayerAnimator;
+        public RuntimeAnimatorController BaseLayerAnimator;
     }
 }
