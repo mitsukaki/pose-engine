@@ -14,7 +14,7 @@ namespace com.mitsukaki.poseengine.editor.generators
         public void Setup(PoseBuildContext context)
         {
             var poseContainer = context.poseEngineInstance.transform
-                .GetChild(0).Find("Poses");
+                .GetChild(1).Find("Poses");
         
             // Get all the AGeneratorMenu components
             var menuComponents = context.avatarRoot.GetComponentsInChildren<AGeneratorMenu>();

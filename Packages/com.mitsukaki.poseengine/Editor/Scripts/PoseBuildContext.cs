@@ -15,20 +15,20 @@ namespace com.mitsukaki.poseengine.editor
         public GameObject avatarRoot;
         public GameObject poseEngineInstance;
 
-        public Builder poseController;
+        public Builder coreAnimator;
 
         public PoseEngineFactory factory;
 
         public PoseBuildContext(
             GameObject avatarRoot,
             GameObject poseEngineInstance,
-            Builder poseController,
+            Builder coreAnimator,
             PoseEngineFactory factory
         )
         {
             this.avatarRoot = avatarRoot;
             this.poseEngineInstance = poseEngineInstance;
-            this.poseController = poseController;
+            this.coreAnimator = coreAnimator;
             this.factory = factory;
         }
     }

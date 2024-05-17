@@ -34,8 +34,12 @@ namespace com.mitsukaki.poseengine.editor.anim
         public AnimatorState fromState;
         public AnimatorState toState;
 
+        public AnimatorStateMachine stateMachine;
+
         public bool hasFixedDuration = true;
         public bool hasExitTime = false;
+
+        public bool fromAnyState = false;
 
         public float duration = 0.0f;
         public float offset = 0.0f;
@@ -63,14 +67,21 @@ namespace com.mitsukaki.poseengine.editor.anim
         /// <returns>The parent builder object.</returns>
         public Builder Build()
         {
-            if (fromState == null || toState == null)
-            {
+            // validate the build request
+            if (fromAnyState && toState == null)
+                throw new System.Exception(
+                    "FluidTransitionBuilder: Cannot create transition from AnyState without a target state."
+                );
+
+            if (!fromAnyState && fromState == null || toState == null)
                 throw new System.Exception(
                     "FluidTransitionBuilder: Cannot create transition without both from and to states."
                 );
-            }
 
-            transition = fromState.AddTransition(toState);
+            // create the transition
+            if (fromAnyState) transition = stateMachine.AddAnyStateTransition(toState);
+            else transition = fromState.AddTransition(toState);
+
             transition.hasFixedDuration = hasFixedDuration;
             transition.hasExitTime = hasExitTime;
             transition.duration = duration;
@@ -95,9 +106,23 @@ namespace com.mitsukaki.poseengine.editor.anim
         /// </summary>
         /// <param name="fromState">The "from" state of the transition.</param>
         /// <returns>The FluidTransitionBuilder object.</returns>
+        /// <remarks>Resets the "fromAnyState" flag.</remarks>
         public FluidTransitionBuilder From(AnimatorState fromState)
         {
             this.fromState = fromState;
+            this.fromAnyState = false;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the "from" state of the transition to be from the "AnyState" node.
+        /// </summary>
+        /// <param name="stateMachine">The state machine with the AnyState to transition from.</param>
+        /// <returns>The FluidTransitionBuilder object.</returns>
+        public FluidTransitionBuilder FromAny(AnimatorStateMachine stateMachine)
+        {
+            this.stateMachine = stateMachine;
+            this.fromAnyState = true;
             return this;
         }
 

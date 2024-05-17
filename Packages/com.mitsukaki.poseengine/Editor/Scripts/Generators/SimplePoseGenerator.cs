@@ -14,7 +14,13 @@ namespace com.mitsukaki.poseengine.editor.generators
     {
         public void Setup(PoseBuildContext context)
         {
-            // ...
+            AnimatorState poseState;
+
+            var animBuilder = context.coreAnimator;
+
+            animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
+            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
+            animBuilder.AddParameter("PoseEngine/Lock/Feet", anim.Builder.BoolParam);
         }
 
         /// <summary>
@@ -34,21 +40,7 @@ namespace com.mitsukaki.poseengine.editor.generators
         /// <returns></returns>
         public void BuildLayers(PoseBuildContext context)
         {
-            AnimatorControllerLayer poseLayer;
-            AnimatorState poseState;
-
-            var animBuilder = context.poseController;
-
-            animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
-            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
-            animBuilder.AddParameter("PoseEngine/Lock/Feet", anim.Builder.BoolParam);
-            animBuilder.AddLayer("PoseEngine/Poser/Pose", 0.0f, out poseLayer);
-            animBuilder.SetLayerAvatarMask(AssetDatabase.LoadAssetAtPath<AvatarMask>(
-                AssetDatabase.GUIDToAssetPath(Constants.POSE_AVATAR_MASK_GUID)
-            ), poseLayer);
-
-            animBuilder.AddDefaultState("PoseEngine_Inactive", poseLayer, out poseState);
-            VRCBehaviourUtility.SetParamFlag(poseState, "PoseEngine/PoseState/Exit");
+            // ...
         }
 
         /// <summary>
@@ -68,97 +60,84 @@ namespace com.mitsukaki.poseengine.editor.generators
                     PopulateSimplePoseLayer(compList.Length, context, pose);
         }
 
-        /// <summary>
-        /// Create a new animation clip that moves the root transform so that the head is centered
-        /// on the X-Y plane.
-        /// </summary>
-        /// <param name="clip">The clip to center</param>
-        /// <returns>The centered clip</returns>
-        private AnimationClip HeadCenterAnimation(
-            AnimationClip clip,
-            Animator animator,
-            GameObject avatarRootObject
+
+        private void PopulateSimplePoseLayer(
+            int componentCount, PoseBuildContext context, SimplePose pose
         )
         {
-            // if not human, skip the processing
-            if (!animator.isHuman) return clip;
+            int stateIndex = pose.PoseID;
+            var animBuilder = context.coreAnimator;
 
-            // sample the animation on the proxy at frame 0
-            var controller = animator.runtimeAnimatorController;
-            var animAvatar = animator.avatar;
-            clip.SampleAnimation(avatarRootObject, 0);
+            // create the pose states
+            var layer = animBuilder.GetLayer(Constants.LOCO_LAYER);
+            layer.name = "PoseEngine/Locomotion";
+            AnimatorState mainState = MakePoseState(
+                context, layer, pose,
+                ComputeStatePosition(stateIndex * 2, componentCount * 2), false
+            );
 
-            // get the distance between the head and the root
-            var headBone = animator.GetBoneTransform(HumanBodyBones.Head);
-            var rootBone = animator.GetBoneTransform(HumanBodyBones.Hips);
+            AnimatorState mirrorState = MakePoseState(
+                context, layer, pose,
+                ComputeStatePosition(stateIndex * 2 + 1, componentCount * 2), true
+            );
 
-            var distance = headBone.position - rootBone.position;
+            // set up transitions
+            var rootState = layer.stateMachine.defaultState;
+            var anyState = layer.stateMachine.AddAnyStateTransition(rootState);
 
-            // create a new animation clip
-            var centeredClip = Object.Instantiate(clip);
-            centeredClip.name = clip.name + "_HC";
+            // entry transition
+            animBuilder.StartTransition()
+                .FromAny(layer.stateMachine).To(mainState)
+                .SetNoExitTime().SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
+                .Build();
 
-            // translate the root transform on all axis
-            var xBinding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.x");
-            var yBinding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
-            var zBinding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.z");
+            // Create exiting transitions
+            CreateExitingTransitions(
+                animBuilder, mainState, mirrorState, rootState, stateIndex
+            );
 
-            TransposeHumanoidClipKeys(xBinding, centeredClip, distance.x);
-            TransposeHumanoidClipKeys(yBinding, centeredClip, distance.y);
-            TransposeHumanoidClipKeys(zBinding, centeredClip, distance.z);
+            // Create mirroring transitions
+            CreateMirroringTransitions(
+                animBuilder, mainState, mirrorState, rootState, stateIndex
+            );
 
-            return centeredClip;
+            // Create swapping exit transitions
+            CreateSwappingExitTransitions(
+                animBuilder, mainState, mirrorState, rootState, stateIndex
+            );
         }
 
-        /// <summary>
-        /// Translate the motion of a humanoid animation clip by a given amount.
-        /// </summary>
-        /// <param name="clip">The clip to translate</param>
-        /// <param name="translation">The translation to apply</param>
-        /// <returns>The translated clip</returns>
-        private AnimationClip TranslateMotion(AnimationClip clip, float translation = 1.0f)
-        {
-            var translatedClip = Object.Instantiate(clip);
-            translatedClip.name = clip.name + "_T" + translation;
-
-            var binding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
-            TransposeHumanoidClipKeys(binding, translatedClip, translation);
-
-            return translatedClip;
-        }
-
-        /// <summary>
-        /// Transpose the keys of a humanoid animation clip by a given translation.
-        /// </summary>
-        /// <param name="binding">The binding to transpose</param>
-        /// <param name="clip">The clip to transpose</param>
-        /// <param name="translation">The translation to apply</param>
-        /// <returns></returns>
-        private void TransposeHumanoidClipKeys(
-            EditorCurveBinding binding, AnimationClip clip, float translation
+        private AnimatorState MakePoseState(
+            PoseBuildContext context, AnimatorControllerLayer layer,
+            SimplePose pose, Vector3 position, bool isMirrored
         )
         {
-            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
+            AnimatorState state;
+            string suffix = isMirrored ? "_M" : "";
 
-            // iterate over all keys and add the translation
-            if (curve != null)
-            {
-                for (int i = 0; i < curve.keys.Length; i++)
-                {
-                    Keyframe key = curve.keys[i];
-                    key.value += translation;
+            var animBuilder = context.coreAnimator;
+            animBuilder.AddState(
+                pose.Name + suffix, layer, position, out state
+            );
 
-                    curve.MoveKey(i, key);
-                }
-            }
-            else
-            {
-                curve = new AnimationCurve();
-                curve.AddKey(0, translation);
-                curve.AddKey(clip.length, translation);
-            }
+            state.writeDefaultValues = false;
+            state.motion = CreateElevatorBlendTree(
+                pose.clip, context, pose.Name + suffix
+            );
 
-            AnimationUtility.SetEditorCurve(clip, binding, curve);
+            // set the parameter drivers
+            VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
+            VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/DelayedEnter");
+
+            // lock feet on entry if needed
+            // TODO: disable hard lock on this being true
+            if (!isMirrored && pose.lockFeetOnEntry || true)
+                VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/Lock/Feet");
+
+            state.mirror = isMirrored;
+
+            return state;
         }
 
         private Motion CreateElevatorBlendTree(
@@ -176,37 +155,6 @@ namespace com.mitsukaki.poseengine.editor.generators
             blendTree.AddChild(TranslateMotion(clip, 2.0f), 1.0f);
 
             return blendTree;
-        }
-
-        private AnimatorState MakePoseState(
-            PoseBuildContext context, AnimatorControllerLayer layer,
-            SimplePose pose, Vector3 position, bool isMirrored
-        )
-        {
-            AnimatorState state;
-            string suffix = isMirrored ? "_M" : "";
-
-            var animBuilder = context.poseController;
-            animBuilder.AddState(
-                pose.Name + suffix, layer, position, out state
-            );
-
-            state.motion = CreateElevatorBlendTree(
-                pose.clip, context, pose.Name + suffix
-            );
-
-            // set the parameter drivers
-            VRCBehaviourUtility.SetParam(state, "PoseEngine/Pose", 0);
-            VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/PoseState/DelayedEnter");
-
-            // lock feet on entry if needed
-            // TODO: disable hard lock on this being true
-            if (!isMirrored && pose.lockFeetOnEntry || true)
-                VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/Lock/Feet");
-
-            state.mirror = isMirrored;
-
-            return state;
         }
 
         private void CreateMirroringTransitions(
@@ -274,49 +222,56 @@ namespace com.mitsukaki.poseengine.editor.generators
                 .Build();
         }
 
-        private void PopulateSimplePoseLayer(
-            int componentCount, PoseBuildContext context, SimplePose pose
+
+        /// <summary>
+        /// Translate the motion of a humanoid animation clip by a given amount.
+        /// </summary>
+        /// <param name="clip">The clip to translate</param>
+        /// <param name="translation">The translation to apply</param>
+        /// <returns>The translated clip</returns>
+        private AnimationClip TranslateMotion(AnimationClip clip, float translation = 1.0f)
+        {
+            var translatedClip = Object.Instantiate(clip);
+            translatedClip.name = clip.name + "_T" + translation;
+
+            var binding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
+            TransposeHumanoidClipKeys(binding, translatedClip, translation);
+
+            return translatedClip;
+        }
+
+        /// <summary>
+        /// Transpose the keys of a humanoid animation clip by a given translation.
+        /// </summary>
+        /// <param name="binding">The binding to transpose</param>
+        /// <param name="clip">The clip to transpose</param>
+        /// <param name="translation">The translation to apply</param>
+        /// <returns></returns>
+        private void TransposeHumanoidClipKeys(
+            EditorCurveBinding binding, AnimationClip clip, float translation
         )
         {
-            int stateIndex = pose.PoseID;
-            var animBuilder = context.poseController;
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
 
-            // create the pose states
-            var layer = animBuilder.GetLayer(Constants.POSE_LAYER);
-            AnimatorState mainState = MakePoseState(
-                context, layer, pose,
-                ComputeStatePosition(stateIndex * 2, componentCount * 2), false
-            );
+            // iterate over all keys and add the translation
+            if (curve != null)
+            {
+                for (int i = 0; i < curve.keys.Length; i++)
+                {
+                    Keyframe key = curve.keys[i];
+                    key.value += translation;
 
-            AnimatorState mirrorState = MakePoseState(
-                context, layer, pose,
-                ComputeStatePosition(stateIndex * 2 + 1, componentCount * 2), true
-            );
+                    curve.MoveKey(i, key);
+                }
+            }
+            else
+            {
+                curve = new AnimationCurve();
+                curve.AddKey(0, translation);
+                curve.AddKey(clip.length, translation);
+            }
 
-            // set up transitions
-            var rootState = layer.stateMachine.defaultState;
-
-            // entry transition
-            animBuilder.StartTransition()
-                .From(rootState).To(mainState)
-                .SetNoExitTime().SetFixedDuration(0.25f)
-                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
-                .Build();
-
-            // Create exiting transitions
-            CreateExitingTransitions(
-                animBuilder, mainState, mirrorState, rootState, stateIndex
-            );
-
-            // Create mirroring transitions
-            CreateMirroringTransitions(
-                animBuilder, mainState, mirrorState, rootState, stateIndex
-            );
-
-            // Create swapping exit transitions
-            CreateSwappingExitTransitions(
-                animBuilder, mainState, mirrorState, rootState, stateIndex
-            );
+            AnimationUtility.SetEditorCurve(clip, binding, curve);
         }
 
         private Vector3 ComputeStatePosition(int index, int itemCount)

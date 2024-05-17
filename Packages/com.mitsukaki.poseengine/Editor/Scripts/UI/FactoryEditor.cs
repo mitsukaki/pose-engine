@@ -48,7 +48,10 @@ namespace com.mitsukaki.poseengine.editor.ui
             if ((target as PoseEngineFactory).avatar != null)
             {
                 // if the avatar has a pose engine prefab
-                if ((target as PoseEngineFactory).avatar.transform.Find("PoseEnginePrefab") != null)
+                if (
+                    (target as PoseEngineFactory).avatar.transform.Find("PoseEnginePrefab") != null ||
+                    (target as PoseEngineFactory).avatar.transform.Find("PoseEngine_BasePrefab") != null
+                )
                 {
                     // Warn the user that the pre-built system is currently broken and should not be used
                     EditorGUILayout.HelpBox(
@@ -60,6 +63,9 @@ namespace com.mitsukaki.poseengine.editor.ui
                     if (GUILayout.Button("Delete Pose Engine Prefab"))
                     {
                         var pePrefab = (target as PoseEngineFactory).avatar.transform.Find("PoseEnginePrefab");
+                        if (pePrefab == null)
+                            pePrefab = (target as PoseEngineFactory).avatar.transform.Find("PoseEngine_BasePrefab");
+                        
                         if (pePrefab != null)
                         {
                             Debug.Log("[PoseEngine] Deleting existing PoseEnginePrefab");

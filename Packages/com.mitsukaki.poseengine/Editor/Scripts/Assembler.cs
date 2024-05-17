@@ -44,17 +44,12 @@ namespace com.mitsukaki.poseengine.editor
             // Attach the pose engine prefab to the avatar
             var poseEngineInstance = AssetUtility.AttatchPrefabFromGUID(
                 avatarRoot.transform,
-                Constants.TEMPLATE_ASSET_GUID
+                Constants.SIMPLE_POSE_PREFAB_GUID
             );
 
-            // Create the animator controller
-            var animBuilder = anim.Builder.CreateSerialized(
-                "Assets/PoseEngine/Generated/"
-                    + AssetUtility.RandomAssetName("controller")
-            );
-
-            // Build the control layer
-            SetupControlLayer(animBuilder);
+            // Get/initialize the core animator
+            var coreAnimator = GetCoreAnimator(avatarRoot);
+            var animBuilder = new anim.Builder(coreAnimator);
 
             // Create the build context
             var poseBuildContext = new PoseBuildContext(
@@ -72,9 +67,18 @@ namespace com.mitsukaki.poseengine.editor
                 DeleteMenuNames(poseBuildContext);
 
             // Apply the animator to the animator merger
+            var generatedLocoObject = FindChildWithNameRecursive(
+                "Generated Loco", avatarRoot.transform
+            );
+
+            if (generatedLocoObject == null)
+            {
+                Debug.LogError("[PoseEngine] Failed to find generated loco object...");
+                return;
+            }
+            
             var animatorMerger = FindAnimatorMerger(
-                avatarRoot,
-                VRCAvatarDescriptor.AnimLayerType.Action
+                generatedLocoObject, VRCAvatarDescriptor.AnimLayerType.Base
             );
 
             if (animatorMerger == null)
@@ -84,63 +88,6 @@ namespace com.mitsukaki.poseengine.editor
             }
 
             animatorMerger.animator = animBuilder;
-        }
-
-        /// <summary>
-        /// Sets up the control layer of the animator controller.
-        /// </summary>
-        /// <param name="animBuilder">The animator builder.</param>
-        private void SetupControlLayer(anim.Builder animBuilder)
-        {
-            AnimatorControllerLayer controlLayer;
-            AnimatorState inactiveState, activeState;
-            VRCAnimatorLayerControl activeBehaviour, inactiveBehaviour;
-
-            // Add the parameters
-            animBuilder.AddParameter("PoseEngine/Pose", anim.Builder.IntParam);
-            animBuilder.AddParameter("PoseEngine/PoseState/Enter", anim.Builder.BoolParam);
-            animBuilder.AddParameter("PoseEngine/PoseState/Exit", anim.Builder.BoolParam);
-
-            // Build the layer
-            animBuilder.AddLayer("PoseEngine/Poser/Control", out controlLayer);
-
-            // Add states
-            animBuilder.AddDefaultState("Inactive", controlLayer, 0, 0, out inactiveState);
-            animBuilder.AddState("Active", controlLayer, 0, 50, out activeState);
-
-            // Add transitions
-            animBuilder.StartTransition()
-                .From(inactiveState).To(activeState).SetDuration(0.25f)
-                .When("PoseEngine/Pose", IsGreaterThan, 0)
-                .When("PoseEngine/Pose", IsNotEqualTo, 255)
-                .Build();
-
-            animBuilder.StartTransition()
-                .From(activeState).To(inactiveState).SetDuration(0.25f)
-                .When("PoseEngine/Pose", IsEqualTo, 255)
-                .Build();
-
-            // Add behaviours
-            animBuilder
-                .AddStateBehaviour<VRCAnimatorLayerControl>(
-                    inactiveState, out inactiveBehaviour
-                )
-                .AddStateBehaviour<VRCAnimatorLayerControl>(
-                    activeState, out activeBehaviour
-                );
-
-            // Configure the behaviours
-            ConfigureLayerControl(
-                inactiveBehaviour, Constants.POSE_LAYER, 0.0f, 0.25f,
-                "PoseEngine/Poser/Control/Inactive"
-            );
-
-            ConfigureLayerControl(
-                activeBehaviour, Constants.POSE_LAYER, 1.0f, 0.25f,
-                "PoseEngine/Poser/Control/Active"
-            );
-
-            AssetDatabase.SaveAssets();
         }
 
         /// <summary>
@@ -170,7 +117,7 @@ namespace com.mitsukaki.poseengine.editor
 
             AssetDatabase.SaveAssets();
 
-            return poseBuildContext.poseController;
+            return poseBuildContext.coreAnimator;
         }
 
         /// <summary>
@@ -204,17 +151,14 @@ namespace com.mitsukaki.poseengine.editor
             if (poseBuildContext.factory.skinIcons == null) return;
 
             var menuContainer = poseBuildContext
-                .poseEngineInstance.transform.GetChild(0);
+                .poseEngineInstance.transform.GetChild(1);
 
             var skinIcons = poseBuildContext.factory.skinIcons;
             foreach (var skinIcon in skinIcons)
             {
                 // if a skin icon or name is not set, skip
                 if (skinIcon.icon == null || skinIcon.name == null)
-                {
-                    Debug.Log("[PoseEngine] Skin icon or name is not set...");
-                    continue;
-                }
+                   continue;
 
                 // find the menu item
                 var menuItem = menuContainer.Find(skinIcon.name);
@@ -294,11 +238,11 @@ namespace com.mitsukaki.poseengine.editor
         /// <param name="layerType">The layer type.</param>
         /// <returns>The animator merger component.</returns>
         private ModularAvatarMergeAnimator FindAnimatorMerger(
-            GameObject avatarRootObject,
+            GameObject searchRoot,
             VRCAvatarDescriptor.AnimLayerType layerType
         )
         {
-            var mergerComponents = avatarRootObject.GetComponentsInChildren<ModularAvatarMergeAnimator>();
+            var mergerComponents = searchRoot.GetComponentsInChildren<ModularAvatarMergeAnimator>();
             if (mergerComponents.Length == 0) return null;
 
             foreach (var comp in mergerComponents)
@@ -309,6 +253,54 @@ namespace com.mitsukaki.poseengine.editor
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Finds a child GameObject with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the child GameObject.</param>
+        /// <param name="parent">The parent transform to search for the child GameObject.</param>
+        /// <returns>The child GameObject with the specified name.</returns>
+        private GameObject FindChildWithNameRecursive(
+            string name,
+            Transform parent
+        )
+        {
+            foreach (Transform child in parent)
+            {
+                if (child.name == name)
+                    return child.gameObject;
+
+                var result = FindChildWithNameRecursive(name, child);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        private AnimatorController GetCoreAnimator(GameObject avatarRoot)
+        {
+            var baseLocos = avatarRoot.GetComponentsInChildren<PEBaseLocomotion>();
+            string assetPath;
+
+            // if no loco, we copy the default
+            if (baseLocos.Length == 0)
+                assetPath = AssetDatabase.GUIDToAssetPath(Constants.DEFAULT_BASE_ANIM_GUID);
+
+            // else we copy the provided one
+            else
+            {
+                var animator = baseLocos[0].BaseLayerAnimator;
+                assetPath = AssetDatabase.GetAssetPath(animator);
+            }
+
+            // duplicate the animator
+            var controllerName = AssetUtility.RandomAssetName("controller");
+            var newPath = "Assets/PoseEngine/Generated/" + controllerName;
+            if (!AssetDatabase.CopyAsset(assetPath, newPath )) return null;
+
+            return AssetDatabase.LoadAssetAtPath<AnimatorController>(newPath);
         }
     }
 }

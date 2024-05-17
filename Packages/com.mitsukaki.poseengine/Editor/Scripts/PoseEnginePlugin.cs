@@ -44,7 +44,10 @@ namespace com.mitsukaki.poseengine.editor
                 .Run("Generate/Apply pose engine", ctx =>
                 {
                     // check if avatar already has a pose engine
-                    if (ctx.AvatarRootObject.transform.Find("PoseEnginePrefab") != null)
+                    if (
+                        ctx.AvatarRootObject.transform.Find("PoseEnginePrefab") != null ||
+                        ctx.AvatarRootObject.transform.Find("PoseEngine_BasePrefab") != null
+                    )
                     {
                         Debug.Log("[PoseEngine] Leaving the existing pose engine prefab.\nRemove the existing pose engine prefab to generate an updated one.");
                         return;
