@@ -9,7 +9,7 @@ using VRC.SDKBase;
 
 namespace com.mitsukaki.poseengine
 {
-    public class PEBaseLocomotion : MonoBehaviour
+    public class PEBaseLocomotion : MonoBehaviour, IEditorOnly
     {
         public AnimatorController BaseLayerAnimator;
     }
