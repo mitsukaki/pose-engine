@@ -179,10 +179,14 @@ namespace com.mitsukaki.poseengine.editor.anim
         /// <param name="threshold">The threshold of the condition.</param>
         /// <returns>The FluidTransitionBuilder object.</returns>
         public FluidTransitionBuilder When(
-            string parameter, AnimatorConditionMode mode, bool threshold
+            string parameter, bool threshold
         )
         {
-            When(parameter, mode, threshold ? 1 : 0);
+            When(
+                parameter,
+                threshold ? Condition.IsTrue : Condition.IsFalse,
+                1.0f
+            );
 
             return this;
         }

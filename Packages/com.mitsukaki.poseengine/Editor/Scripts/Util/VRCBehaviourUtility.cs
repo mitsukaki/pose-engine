@@ -38,6 +38,18 @@ namespace com.mitsukaki.poseengine.editor
             });
         }
 
+        public static void SetParam(AnimatorState state, string paramName, bool value)
+        {
+            var poseDriverBehaviour = state.AddStateMachineBehaviour<VRCAvatarParameterDriver>();
+            poseDriverBehaviour.parameters = new List<VRCAvatarParameterDriver.Parameter>();
+            poseDriverBehaviour.parameters.Add(new VRCAvatarParameterDriver.Parameter()
+            {
+                type = VRCAvatarParameterDriver.ChangeType.Set,
+                name = paramName,
+                value = value ? 1 : 0
+            });
+        }
+
         public static void SetParam(AnimatorState state, string paramName, int value)
         {
             var poseDriverBehaviour = state.AddStateMachineBehaviour<VRCAvatarParameterDriver>();

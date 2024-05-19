@@ -18,9 +18,11 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             var animBuilder = context.coreAnimator;
 
+            animBuilder.AddParameter("PoseEngine/Pose", anim.Builder.IntParam);
+            animBuilder.AddParameter("PoseEngine/Mirrored", anim.Builder.BoolParam);
             animBuilder.AddParameter("PoseEngine/Elevation", anim.Builder.FloatParam);
-            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
             animBuilder.AddParameter("PoseEngine/Lock/Feet", anim.Builder.BoolParam);
+            animBuilder.AddParameter("PoseEngine/PoseState/DelayedEnter", anim.Builder.BoolParam);
         }
 
         /// <summary>
@@ -40,7 +42,9 @@ namespace com.mitsukaki.poseengine.editor.generators
         /// <returns></returns>
         public void BuildLayers(PoseBuildContext context)
         {
-            // ...
+            var animBuilder = context.coreAnimator;
+            var layer = animBuilder.GetLayer(Constants.LOCO_LAYER);
+            layer.name = "PoseEngine/Locomotion";
         }
 
         /// <summary>
@@ -57,55 +61,50 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             foreach (var comp in compList)
                 foreach (var pose in comp.poses)
-                    PopulateSimplePoseLayer(compList.Length, context, pose);
+                {
+                    CreateSimplePoseState(compList.Length, context, pose, false);
+                    CreateSimplePoseState(compList.Length, context, pose, true);
+                }
+                
         }
 
 
-        private void PopulateSimplePoseLayer(
-            int componentCount, PoseBuildContext context, SimplePose pose
+        private void CreateSimplePoseState(
+            int componentCount,
+            PoseBuildContext context,
+            SimplePose pose,
+            bool isMirrored
         )
         {
             int stateIndex = pose.PoseID;
             var animBuilder = context.coreAnimator;
 
-            // create the pose states
+            // create the pose state
             var layer = animBuilder.GetLayer(Constants.LOCO_LAYER);
-            layer.name = "PoseEngine/Locomotion";
-            AnimatorState mainState = MakePoseState(
-                context, layer, pose,
-                ComputeStatePosition(stateIndex * 2, componentCount * 2), false
-            );
-
-            AnimatorState mirrorState = MakePoseState(
-                context, layer, pose,
-                ComputeStatePosition(stateIndex * 2 + 1, componentCount * 2), true
-            );
-
-            // set up transitions
             var rootState = layer.stateMachine.defaultState;
-            var anyState = layer.stateMachine.AddAnyStateTransition(rootState);
+            var statePos = ComputeStatePosition(
+                stateIndex * 2 + (isMirrored ? 1 : 0), componentCount * 2
+            );
+            
+            Debug.Log("[PoseEngine] Creating pose state " + pose.Name + " at " + statePos.ToString() + " (mirrored: " + isMirrored + ")");
+            AnimatorState poseState = MakePoseState(
+                context, layer, pose, statePos, isMirrored
+            );
 
             // entry transition
             animBuilder.StartTransition()
-                .FromAny(layer.stateMachine).To(mainState)
+                .FromAny(layer.stateMachine).To(poseState)
                 .SetNoExitTime().SetFixedDuration(0.25f)
                 .When("PoseEngine/Pose", IsEqualTo, stateIndex)
+                .When("PoseEngine/Mirrored", isMirrored)
                 .Build();
 
-            // Create exiting transitions
-            CreateExitingTransitions(
-                animBuilder, mainState, mirrorState, rootState, stateIndex
-            );
-
-            // Create mirroring transitions
-            CreateMirroringTransitions(
-                animBuilder, mainState, mirrorState, rootState, stateIndex
-            );
-
-            // Create swapping exit transitions
-            CreateSwappingExitTransitions(
-                animBuilder, mainState, mirrorState, rootState, stateIndex
-            );
+            // exiting transition
+            animBuilder.StartTransition()
+                .From(poseState).To(rootState)
+                .SetNoExitTime().SetFixedDuration(0.25f)
+                .When("PoseEngine/Pose", IsEqualTo, 255)
+                .Build();
         }
 
         private AnimatorState MakePoseState(
@@ -135,6 +134,9 @@ namespace com.mitsukaki.poseengine.editor.generators
             if (!isMirrored && pose.lockFeetOnEntry || true)
                 VRCBehaviourUtility.SetParamFlag(state, "PoseEngine/Lock/Feet");
 
+            // add behaviour to set the mirrored flag (inverted to current value)
+            VRCBehaviourUtility.SetParam(state, "PoseEngine/Mirrored", !isMirrored);
+
             state.mirror = isMirrored;
 
             return state;
@@ -156,72 +158,6 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             return blendTree;
         }
-
-        private void CreateMirroringTransitions(
-            anim.Builder animBuilder, AnimatorState mainState,
-            AnimatorState mirrorState, AnimatorState rootState,
-            int stateIndex
-        )
-        {
-            // swap to mirror transition
-            animBuilder.StartTransition()
-                .From(mainState).To(mirrorState)
-                .SetExitTime(0.25f).SetFixedDuration(0.25f)
-                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
-                .Build();
-
-            // unswap from mirror transition
-            animBuilder.StartTransition()
-                .From(mirrorState).To(mainState)
-                .SetExitTime(0.25f).SetFixedDuration(0.25f)
-                .When("PoseEngine/Pose", IsEqualTo, stateIndex)
-                .Build();
-        }
-
-        private void CreateSwappingExitTransitions(
-            anim.Builder animBuilder, AnimatorState mainState,
-            AnimatorState mirrorState, AnimatorState rootState,
-            int stateIndex
-        )
-        {
-            // swapping pose exit transition
-            animBuilder.StartTransition()
-                .From(mainState).To(rootState)
-                .SetNoExitTime().SetFixedDuration(0.05f)
-                .When("PoseEngine/Pose", IsNotEqualTo, stateIndex)
-                .When("PoseEngine/Pose", IsNotEqualTo, 0)
-                .Build();
-
-            // mirror swapping pose exit transition
-            animBuilder.StartTransition()
-                .From(mirrorState).To(rootState)
-                .SetNoExitTime().SetFixedDuration(0.05f)
-                .When("PoseEngine/Pose", IsNotEqualTo, stateIndex)
-                .When("PoseEngine/Pose", IsNotEqualTo, 0)
-                .Build();
-        }
-
-        private void CreateExitingTransitions(
-            anim.Builder animBuilder, AnimatorState mainState,
-            AnimatorState mirrorState, AnimatorState rootState,
-            int stateIndex
-        )
-        {
-            // main exiting transition
-            animBuilder.StartTransition()
-                .From(mainState).To(rootState)
-                .SetNoExitTime().SetFixedDuration(0.25f)
-                .When("PoseEngine/Pose", IsEqualTo, 255)
-                .Build();
-
-            // mirror exiting transition
-            animBuilder.StartTransition()
-                .From(mirrorState).To(rootState)
-                .SetNoExitTime().SetFixedDuration(0.25f)
-                .When("PoseEngine/Pose", IsEqualTo, 255)
-                .Build();
-        }
-
 
         /// <summary>
         /// Translate the motion of a humanoid animation clip by a given amount.
