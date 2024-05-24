@@ -773,6 +773,7 @@ GameObject:
   - component: {fileID: 1231651233}
   - component: {fileID: 1231651232}
   - component: {fileID: 1231651234}
+  - component: {fileID: 1231651235}
   m_Layer: 0
   m_Name: == Poses ==
   m_TagString: Untagged
@@ -845,6 +846,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BaseLayerAnimator: {fileID: 9100000, guid: 38a10fd97deede846b874be5b27a0cbc, type: 2}
+--- !u!114 &1231651235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231651230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a18685b2693a74c937982d32b0170c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poses: []
 --- !u!1 &1534511012
 GameObject:
   m_ObjectHideFlags: 1

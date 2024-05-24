@@ -41,6 +41,7 @@ namespace com.mitsukaki.poseengine.editor
         {
             InPhase(BuildPhase.Generating)
                 .BeforePlugin("nadena.dev.modular-avatar")
+                .BeforePlugin("com.anatawa12.avatar-optimizer")
                 .Run("Generate/Apply pose engine", ctx =>
                 {
                     // check if avatar already has a pose engine
