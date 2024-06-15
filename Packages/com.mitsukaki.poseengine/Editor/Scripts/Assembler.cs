@@ -284,6 +284,8 @@ namespace com.mitsukaki.poseengine.editor
             var baseLocos = avatarRoot.GetComponentsInChildren<PEBaseLocomotion>();
             string assetPath;
 
+            // TODO: scout for LocoBuilder Component.
+
             // if no loco, we copy the default
             if (baseLocos.Length == 0)
                 assetPath = AssetDatabase.GUIDToAssetPath(Constants.DEFAULT_BASE_ANIM_GUID);

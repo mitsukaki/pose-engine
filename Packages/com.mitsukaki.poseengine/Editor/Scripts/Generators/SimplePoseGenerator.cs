@@ -14,8 +14,6 @@ namespace com.mitsukaki.poseengine.editor.generators
     {
         public void Setup(PoseBuildContext context)
         {
-            AnimatorState poseState;
-
             var animBuilder = context.coreAnimator;
 
             animBuilder.AddParameter("PoseEngine/Pose", anim.Builder.IntParam);
@@ -86,7 +84,6 @@ namespace com.mitsukaki.poseengine.editor.generators
                 stateIndex * 2 + (isMirrored ? 1 : 0), componentCount * 2
             );
             
-            Debug.Log("[PoseEngine] Creating pose state " + pose.Name + " at " + statePos.ToString() + " (mirrored: " + isMirrored + ")");
             AnimatorState poseState = MakePoseState(
                 context, layer, pose, statePos, isMirrored
             );

@@ -15,12 +15,7 @@ namespace com.mitsukaki.poseengine.editor.generators
     {
         public void Setup(PoseBuildContext context)
         {
-            var animBuilder = context.coreAnimator;
-
-            animBuilder.AddParameter(
-                "PoseEngine/BlendPosePosition",
-                anim.Builder.FloatParam
-            );
+            // ...
         }
 
         /// <summary>
@@ -84,17 +79,11 @@ namespace com.mitsukaki.poseengine.editor.generators
             switch (blendedPose.blendType)
             {
                 case BlendPoseType.SingleClip:
-                    poseState = CreateSingleClipState(
-                        blendedPose, context
-                    );
-
+                    poseState = CreateSingleClipState(blendedPose, context);
                     break;
 
                 case BlendPoseType.MultiClip:
-                    poseState = CreateMultiClipState(
-                        blendedPose, context
-                    );
-
+                    poseState = CreateMultiClipState(blendedPose, context);
                     break;
 
                 default:
@@ -104,6 +93,11 @@ namespace com.mitsukaki.poseengine.editor.generators
 
                     return;
             }
+            
+            // add the parameter to the avatar parameters
+            ParameterUtility.AddNewParameter(
+                context, blendedPose.DrivingParameterName
+            );
 
             // set the parameter drivers
             VRCBehaviourUtility.SetParam(poseState, "PoseEngine/Pose", 0);
