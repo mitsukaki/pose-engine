@@ -22,19 +22,14 @@ namespace com.mitsukaki.poseengine.editor.generators
             // give all the poses an unique ID
             int poseIndex = 1;
             foreach (var menuComp in menuComponents)
-            {
-                foreach (var pose in menuComp.GetPoseList())
-                {
-                    pose.PoseID = poseIndex;
-                    poseIndex++;
-                }
-            }
+                poseIndex = menuComp.EnumeratePoses(poseIndex);
 
             // Get all PEGeneratorMenu components
             var peMenuComponents = context.avatarRoot
                 .GetComponentsInChildren<PEMenu>();
 
-            // for each menu component
+            // migrate all the pose generator's data components into the poses game object, maintaining their heirarchy
+            // if they're on the same object as a PEMenu object then they are transferred to the root of the poses game object.
             foreach (var menuComp in peMenuComponents)
             {
                 // copy any AGeneratorMenu components off the PEMenu game object to the poses game object
@@ -52,7 +47,7 @@ namespace com.mitsukaki.poseengine.editor.generators
             }
 
             // create the menus for the pose hierarchy
-            CreateMenuForObject(context, poseContainer.gameObject);
+            CreateMenuFolders(context, poseContainer.gameObject);
 
             // create the pose toggles for the pose container
             CreatePoseToggles(context, poseContainer.gameObject);
@@ -71,7 +66,7 @@ namespace com.mitsukaki.poseengine.editor.generators
             // No states to build
         }
 
-        public void CreateMenuForObject(PoseBuildContext context, GameObject menu)
+        public void CreateMenuFolders(PoseBuildContext context, GameObject menu)
         {
             // add menu item script to the object
             var menuItem = menu.AddComponent<ModularAvatarMenuItem>();
@@ -92,7 +87,7 @@ namespace com.mitsukaki.poseengine.editor.generators
 
             // create a menu on every child object
             foreach (Transform child in menu.transform)
-                CreateMenuForObject(context, child.gameObject);
+                CreateMenuFolders(context, child.gameObject);
         }
 
         public void CreatePoseToggles(PoseBuildContext context, GameObject menu)
@@ -108,6 +103,10 @@ namespace com.mitsukaki.poseengine.editor.generators
                 // create a child for every pose
                 foreach (var pose in menuComp.GetPoseList())
                 {
+                    // if we aren't supposed to make a menu, skip this object
+                    if (pose.MenuControlType == PoseMenuControlType.None)
+                        continue;
+
                     // create a child game object for the pose
                     var poseObject = new GameObject(pose.Name);
                     poseObject.transform.parent = obj.transform;
@@ -115,13 +114,26 @@ namespace com.mitsukaki.poseengine.editor.generators
                     // attatch the menu item to the object
                     var poseMenuItem = poseObject.AddComponent<ModularAvatarMenuItem>();
                     poseMenuItem.Control = new VRCExpressionsMenu.Control();
-                    poseMenuItem.MenuSource = SubmenuSource.Children;
 
                     // create the menu item for the object
                     poseMenuItem.Control.name = pose.Name;
-                    poseMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
                     poseMenuItem.Control.icon = pose.Icon;
                     poseMenuItem.Control.value = pose.PoseID;
+
+                    switch(pose.MenuControlType)
+                    {
+                        case PoseMenuControlType.ToggleEnable:
+                            poseMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
+                            break;
+
+                        case PoseMenuControlType.Radial:
+                            poseMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.RadialPuppet;
+                            poseMenuItem.Control.subParameters = new VRCExpressionsMenu.Control.Parameter[1];
+                            poseMenuItem.Control.subParameters[0] = new VRCExpressionsMenu.Control.Parameter();
+                            poseMenuItem.Control.subParameters[0].name = pose.DrivingParameterName;
+
+                            break;
+                    }
 
                     // add parameter to the menu item
                     poseMenuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter();

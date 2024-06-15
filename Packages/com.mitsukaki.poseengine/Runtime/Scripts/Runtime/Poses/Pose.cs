@@ -8,6 +8,8 @@ using VRC.SDKBase;
 
 namespace com.mitsukaki.poseengine
 {
+    public enum PoseMenuControlType { None, ToggleEnable, Radial };
+
     public class Pose
     {
         public int PoseID;
@@ -17,5 +19,9 @@ namespace com.mitsukaki.poseengine
         public Texture2D Icon;
 
         public bool lockFeetOnEntry = true;
+
+        public virtual PoseMenuControlType MenuControlType => PoseMenuControlType.None;
+
+        public string DrivingParameterName;
     }
 }

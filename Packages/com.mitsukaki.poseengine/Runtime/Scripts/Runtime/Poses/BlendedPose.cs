@@ -14,6 +14,10 @@ namespace com.mitsukaki.poseengine
     {
         public List<AnimationClip> clips;
 
-        public BlendPoseType Type;
+        public BlendPoseType blendType;
+
+        public PoseMenuControlType menuControlType;
+
+        public override PoseMenuControlType MenuControlType => menuControlType;
     }
 }

@@ -121,8 +121,10 @@ namespace com.mitsukaki.poseengine.editor.generators
             );
 
             state.writeDefaultValues = false;
-            state.motion = CreateElevatorBlendTree(
-                pose.clip, context, pose.Name + suffix
+            state.motion = ElevatorUtility.CreateElevatorBlendTree(
+                ElevatorUtility.TranslateMotion(pose.clip, -2.0f),
+                ElevatorUtility.TranslateMotion(pose.clip, 2.0f),
+                context, pose.Name + suffix
             );
 
             // set the parameter drivers
@@ -140,74 +142,6 @@ namespace com.mitsukaki.poseengine.editor.generators
             state.mirror = isMirrored;
 
             return state;
-        }
-
-        private Motion CreateElevatorBlendTree(
-            AnimationClip clip, PoseBuildContext buildContext, string name
-        ) 
-        {
-            // create the blend tree
-            var blendTree = new BlendTree();
-            blendTree.name = name;
-
-            blendTree.blendType = BlendTreeType.Simple1D;
-            blendTree.blendParameter = "PoseEngine/Elevation";
-
-            blendTree.AddChild(TranslateMotion(clip, -2.0f), 0.0f);
-            blendTree.AddChild(TranslateMotion(clip, 2.0f), 1.0f);
-
-            return blendTree;
-        }
-
-        /// <summary>
-        /// Translate the motion of a humanoid animation clip by a given amount.
-        /// </summary>
-        /// <param name="clip">The clip to translate</param>
-        /// <param name="translation">The translation to apply</param>
-        /// <returns>The translated clip</returns>
-        private AnimationClip TranslateMotion(AnimationClip clip, float translation = 1.0f)
-        {
-            var translatedClip = Object.Instantiate(clip);
-            translatedClip.name = clip.name + "_T" + translation;
-
-            var binding = EditorCurveBinding.FloatCurve("", typeof(UnityEngine.Animator), "RootT.y");
-            TransposeHumanoidClipKeys(binding, translatedClip, translation);
-
-            return translatedClip;
-        }
-
-        /// <summary>
-        /// Transpose the keys of a humanoid animation clip by a given translation.
-        /// </summary>
-        /// <param name="binding">The binding to transpose</param>
-        /// <param name="clip">The clip to transpose</param>
-        /// <param name="translation">The translation to apply</param>
-        /// <returns></returns>
-        private void TransposeHumanoidClipKeys(
-            EditorCurveBinding binding, AnimationClip clip, float translation
-        )
-        {
-            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
-
-            // iterate over all keys and add the translation
-            if (curve != null)
-            {
-                for (int i = 0; i < curve.keys.Length; i++)
-                {
-                    Keyframe key = curve.keys[i];
-                    key.value += translation;
-
-                    curve.MoveKey(i, key);
-                }
-            }
-            else
-            {
-                curve = new AnimationCurve();
-                curve.AddKey(0, translation);
-                curve.AddKey(clip.length, translation);
-            }
-
-            AnimationUtility.SetEditorCurve(clip, binding, curve);
         }
 
         private Vector3 ComputeStatePosition(int index, int itemCount)

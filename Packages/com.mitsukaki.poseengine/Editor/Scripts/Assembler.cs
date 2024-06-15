@@ -183,7 +183,7 @@ namespace com.mitsukaki.poseengine.editor
         {
             Debug.Log("[PoseEngine] Deleting menu item names...");
             DeleteChildMenuNames(
-                poseBuildContext.poseEngineInstance.transform.GetChild(0)
+                poseBuildContext.poseEngineInstance.transform.GetChild(1)
             );
         }
 

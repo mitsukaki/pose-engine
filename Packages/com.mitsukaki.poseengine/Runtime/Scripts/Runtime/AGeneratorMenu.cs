@@ -14,6 +14,13 @@ namespace com.mitsukaki.poseengine
 
         public abstract List<Pose> GetPoseList();
 
+        /// <summary>
+        /// Enumerate the poses in the menu, giving each an ID
+        /// </summary>
+        /// <param name="startIndex">The ID to start at</param>
+        /// <returns>The ID to start at for the next menu</returns>
+        public abstract int EnumeratePoses(int startIndex);
+
         public abstract void CopyTo(GameObject target);
     }
 }

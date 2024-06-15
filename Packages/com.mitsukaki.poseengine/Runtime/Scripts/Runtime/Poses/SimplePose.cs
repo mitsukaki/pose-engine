@@ -12,5 +12,7 @@ namespace com.mitsukaki.poseengine
     public class SimplePose : Pose
     {
         public AnimationClip clip;
+
+        public override PoseMenuControlType MenuControlType => PoseMenuControlType.ToggleEnable;
     }
 }

@@ -126,7 +126,8 @@ namespace com.mitsukaki.poseengine.editor.ui
                 var assembler = new Assembler(
                     new List<generators.IPoseGenerator>{
                         new generators.MenuGenerator(),
-                        new generators.SimplePoseGenerator()
+                        new generators.SimplePoseGenerator(),
+                        new generators.BlendedPoseGenerator()
                     }
                 );
 

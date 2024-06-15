@@ -28,6 +28,19 @@ namespace com.mitsukaki.poseengine
             return poseList;
         }
 
+        public override int EnumeratePoses(int startIndex)
+        {
+            int index = startIndex;
+
+            foreach (var pose in poses)
+            {
+                pose.PoseID = index;
+                index++;
+            }
+
+            return index;
+        }
+
         public override void CopyTo(GameObject target)
         {
             // add a PEBlendedPose component to the target

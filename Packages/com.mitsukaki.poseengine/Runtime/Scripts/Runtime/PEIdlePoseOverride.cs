@@ -31,6 +31,11 @@ namespace com.mitsukaki.poseengine
             return poseList;
         }
 
+        public override int EnumeratePoses(int startIndex)
+        {
+            return startIndex;
+        }
+
         public override void CopyTo(GameObject target)
         {
             // add a PEIdlePoseOverride component to the target

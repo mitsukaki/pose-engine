@@ -75,6 +75,20 @@ namespace com.mitsukaki.poseengine.editor.anim
         }
 
         /// <summary>
+        /// Adds a trigger parameter to the AnimatorController being built.
+        /// </summary>
+        /// <param name="name">The name of the parameter.</param>
+        /// <returns>True if this controller contains the specified parameter.</returns>
+        public bool HasParameter(string name)
+        {
+            foreach (var param in controller.parameters)
+                if (param.name == name)
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets the AnimatorController that has been built.
         /// </summary>
         /// <returns>The built AnimatorController.</returns>
