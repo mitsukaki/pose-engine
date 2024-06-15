@@ -1,6 +1,9 @@
 # Pose Engine
 Pose engine is a tool that makes it easy to add custom poses, and complex locomotion systems to your vrchat avatar. It aims to be easy to use, while remaining as flexible as possible, and is **entirely non-destructive.**
 
+### Please be Advised
+Pose Engine is still in early development, and while it's functional and actively used by avatar creators, there can be bugs, and documentation is lacking. Feedback is most welcome.
+
 ## Features
 - **Easy to use**: Pose engine is designed to be easy to use, and requires **no coding or animator skills** to get started with.
 - **Non-destructive**: Pose engine does not modify your avatar in any way, and can be removed at any time.
