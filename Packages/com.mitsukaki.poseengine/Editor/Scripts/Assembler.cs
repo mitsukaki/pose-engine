@@ -50,6 +50,7 @@ namespace com.mitsukaki.poseengine.editor
             // Get/initialize the core animator
             var coreAnimator = GetCoreAnimator(avatarRoot);
             var animBuilder = new anim.Builder(coreAnimator);
+            animBuilder = PatchBaseLocomotion(animBuilder, avatarRoot);
 
             // Create the build context
             var poseBuildContext = new PoseBuildContext(
@@ -88,6 +89,97 @@ namespace com.mitsukaki.poseengine.editor
             }
 
             animatorMerger.animator = animBuilder;
+        }
+
+        /// <summary>
+        /// Patches the base locomotion for the specified avatar if using the default animator.
+        /// </summary>
+        /// <param name="coreAnimator">The core animator.</param>
+        /// <param name="avatarRoot">The root GameObject of the avatar.</param>
+        private anim.Builder PatchBaseLocomotion(
+            anim.Builder coreAnimator,
+            GameObject avatarRoot
+        )
+        {
+            // if no loco's are found we abort
+            var baseLocos = avatarRoot.GetComponentsInChildren<PEBaseLocomotion>();
+            if (baseLocos.Length == 0) return coreAnimator;
+
+            // if the base loco has the base layer animator set, we abort
+            if (baseLocos[0].BaseLayerAnimator != null) {
+                Debug.Log("[PoseEngine] Base locomotion already has a base layer animator set, so overrides wont be applied.");
+                return coreAnimator;
+            }
+
+            var baseLoco = baseLocos[0];
+
+            // get the base layer
+            var baseLayer = coreAnimator.GetLayer(Constants.LOCO_LAYER);
+
+            // set the crouch clip
+            if (baseLoco.crouchClip != null)
+            {
+                Debug.Log("[PoseEngine] Setting crouch clip...");
+                // get the crouch state
+                var crouchState = FindState("Crouching", baseLayer.stateMachine);
+                if (!baseLoco.keepCrouchCrawling)
+                    crouchState.motion = baseLoco.crouchClip;
+                else
+                {
+                    var blendTree = crouchState.motion as BlendTree;
+                    blendTree.children[0].motion = baseLoco.crouchClip;
+                }
+            }
+
+            // set the prone clip
+            if (baseLoco.proneClip != null)
+            {
+                Debug.Log("[PoseEngine] Setting prone clip...");
+                // get the prone state
+                var proneState = FindState("Prone", baseLayer.stateMachine);
+                if (!baseLoco.keepProneCrawling)
+                    proneState.motion = baseLoco.proneClip;
+                else
+                {
+                    var blendTree = proneState.motion as BlendTree;
+                    blendTree.children[0].motion = baseLoco.proneClip;
+                }
+            }
+
+            // generate the AFK clip
+            if (baseLoco.afkClip != null)
+            {
+                Debug.Log("[PoseEngine] Setting AFK clip...");
+                // create an afk state
+                AnimatorState afkState;
+                coreAnimator.AddState("AFK", baseLayer, out afkState);
+                afkState.motion = baseLoco.afkClip;
+
+                // add a transition to the afk state
+                coreAnimator.StartTransition()
+                    .FromAny(baseLayer.stateMachine).To(afkState)
+                    .SetNoExitTime().SetFixedDuration(0.25f)
+                    .When("AFK", true)
+                    .Build();
+
+                // add a transition from the afk state
+                coreAnimator.StartTransition()
+                    .From(afkState).To(baseLayer.stateMachine.defaultState)
+                    .SetNoExitTime().SetFixedDuration(0.25f)
+                    .When("AFK", false)
+                    .Build();
+            }
+
+            return coreAnimator;
+        }
+
+        private AnimatorState FindState(string name, AnimatorStateMachine machine)
+        {
+            foreach (var state in machine.states)
+                if (state.state.name == name)
+                    return state.state;
+
+            return null;
         }
 
         /// <summary>
@@ -282,12 +374,10 @@ namespace com.mitsukaki.poseengine.editor
         private AnimatorController GetCoreAnimator(GameObject avatarRoot)
         {
             var baseLocos = avatarRoot.GetComponentsInChildren<PEBaseLocomotion>();
-            string assetPath;
-
-            // TODO: scout for LocoBuilder Component.
 
             // if no loco, we copy the default
-            if (baseLocos.Length == 0)
+            string assetPath;
+            if (baseLocos.Length == 0 || baseLocos[0].BaseLayerAnimator == null)
                 assetPath = AssetDatabase.GUIDToAssetPath(Constants.DEFAULT_BASE_ANIM_GUID);
 
             // else we copy the provided one

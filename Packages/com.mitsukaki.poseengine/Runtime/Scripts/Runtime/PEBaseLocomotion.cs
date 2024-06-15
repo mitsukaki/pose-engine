@@ -15,5 +15,8 @@ namespace com.mitsukaki.poseengine
         public AnimationClip crouchClip;
         public AnimationClip proneClip;
         public AnimationClip afkClip;
+
+        public bool keepCrouchCrawling = false;
+        public bool keepProneCrawling = false;
     }
 }
