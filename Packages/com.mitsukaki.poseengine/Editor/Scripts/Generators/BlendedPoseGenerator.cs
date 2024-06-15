@@ -100,7 +100,7 @@ namespace com.mitsukaki.poseengine.editor.generators
             );
 
             // set the parameter drivers
-            VRCBehaviourUtility.SetParam(poseState, "PoseEngine/Pose", 0);
+            // VRCBehaviourUtility.SetParam(poseState, "PoseEngine/Pose", 0);
             VRCBehaviourUtility.SetParamFlag(poseState, "PoseEngine/PoseState/DelayedEnter");
 
             // lock feet on entry if needed
