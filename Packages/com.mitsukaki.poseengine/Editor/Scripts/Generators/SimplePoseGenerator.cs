@@ -1,12 +1,8 @@
 
 using UnityEngine;
-using UnityEditor;
 using UnityEditor.Animations;
 
 using static com.mitsukaki.poseengine.editor.anim.Condition;
-
-using VRC.SDK3.Avatars.Components;
-using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace com.mitsukaki.poseengine.editor.generators
 {
@@ -102,6 +98,18 @@ namespace com.mitsukaki.poseengine.editor.generators
                 .SetNoExitTime().SetFixedDuration(0.25f)
                 .When("PoseEngine/Pose", IsEqualTo, 255)
                 .Build();
+
+            // pose restore transition
+            if (context.factory.persistantPosing)
+            {
+                PersistentPoseUtility.ApplyPersistenceParamDrivers(
+                    poseState, pose, isMirrored
+                );
+
+                PersistentPoseUtility.CreateRestoringTransition(
+                    context, layer, poseState, pose, true, isMirrored
+                ); 
+            }
         }
 
         private AnimatorState MakePoseState(

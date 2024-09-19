@@ -8,7 +8,6 @@ using UnityEditor.Animations;
 using nadena.dev.modular_avatar.core;
 
 using VRC.SDK3.Avatars.Components;
-using VRC.SDK3.Avatars.ScriptableObjects;
 
 using com.mitsukaki.poseengine.editor.generators;
 using static com.mitsukaki.poseengine.editor.anim.Condition;
@@ -57,8 +56,16 @@ namespace com.mitsukaki.poseengine.editor
                 avatarRoot, poseEngineInstance, animBuilder, factory
             );
 
+            // Enable persistent posing
+            if (factory.persistantPosing)
+                EnablePersistentPosing(poseBuildContext);
+
             // Run the pose animation generators
             ExecuteGenerators(poseBuildContext);
+
+            // Finalize persistent posing
+            if (factory.persistantPosing)
+                FinalizePersistentPosing(poseBuildContext);
 
             // Skin the menu
             ApplyMenuSkin(poseBuildContext);
@@ -89,10 +96,6 @@ namespace com.mitsukaki.poseengine.editor
             }
 
             animatorMerger.animator = animBuilder;
-
-            // Set the pose parameter to be saved or not
-            if (factory.persistantPosing)
-                EnablePersistentPosing(poseEngineInstance);
         }
 
         /// <summary>
@@ -399,9 +402,30 @@ namespace com.mitsukaki.poseengine.editor
             return AssetDatabase.LoadAssetAtPath<AnimatorController>(newPath);
         }
 
-        private void EnablePersistentPosing(GameObject pePrefab)
+        private void MakeMAParameter(
+            ModularAvatarParameters maParams,
+            string name, bool isSaved
+        )
         {
-            Debug.Log("[PoseEngine] Enabling persistent posing...");
+            // create new parameter for the pose restore
+            ParameterConfig maParam = new ParameterConfig
+            {
+                nameOrPrefix = name,
+                internalParameter = false,
+                isPrefix = false,
+                syncType = ParameterSyncType.NotSynced,
+                localOnly = true,
+                defaultValue = 0,
+                saved = isSaved,
+                hasExplicitDefaultValue = false
+            };
+
+            maParams.parameters.Add(maParam);
+        }
+
+        private void EnablePersistentPosing(PoseBuildContext context)
+        {
+            var pePrefab = context.poseEngineInstance;
             var maParams = pePrefab.GetComponent<ModularAvatarParameters>();
             if (maParams == null)
             {
@@ -409,18 +433,52 @@ namespace com.mitsukaki.poseengine.editor
                 return;
             }
 
-            for (int i = 0; i < maParams.parameters.Count; i++)
+            // Create the pose restore & mirror flag parameters
+            MakeMAParameter(maParams, "PoseEngine/PoseRestore/PoseID", true);
+            MakeMAParameter(maParams, "PoseEngine/PoseRestore/Mirrored", true);
+            MakeMAParameter(maParams, "PoseEngine/PoseRestore/Activating", false);
+
+            // Create the animator params
+            var animBuilder = context.coreAnimator;
+            animBuilder.AddParameter("PoseEngine/PoseRestore/PoseID", anim.Builder.IntParam);
+            animBuilder.AddParameter("PoseEngine/PoseRestore/Mirrored", anim.Builder.BoolParam);
+            animBuilder.AddParameter("PoseEngine/PoseRestore/Activating", anim.Builder.BoolParam);
+
+            // Create the new loading state, and transitions
+            var layer = animBuilder.GetLayer(Constants.LOCO_LAYER);
+            AnimatorState loadingState;
+            animBuilder.AddState("PoseRestore/Loading", layer, out loadingState);
+            loadingState.writeDefaultValues = false;
+            
+            // Add the transitions to the restore state and also the current default state
+            // skip/bypass transition
+            animBuilder.StartTransition()
+                .From(loadingState).To(layer.stateMachine.defaultState)
+                .SetNoExitTime().SetFixedDuration(0.01f)
+                .When("PoseEngine/PoseRestore/PoseID", IsEqualTo, 0)
+                .Build();
+
+            Debug.Log("[PoseEngine] Enabled persistent posing.");
+        }
+
+        private void FinalizePersistentPosing(PoseBuildContext context)
+        {
+            var animBuilder = context.coreAnimator;
+            var layer = animBuilder.GetLayer(Constants.LOCO_LAYER);
+            var loadingState = animBuilder.FindStateByName(
+                "PoseRestore/Loading", layer
+            );
+
+            if (loadingState == null)
             {
-                if (maParams.parameters[i].nameOrPrefix == "PoseEngine/Pose")
-                {
-                    ParameterConfig maParam = maParams.parameters[i];
-                    maParam.saved = true;
-                    maParams.parameters[i] = maParam;
-                    return;
-                }
+                Debug.LogError("[PoseEngine] Failed to find loading state...");
+                return;
             }
 
-            Debug.LogError("[PoseEngine] Failed to find pose parameter...");
+            // make the loading state the default
+            layer.stateMachine.defaultState = loadingState;
+
+            Debug.Log("[PoseEngine] Finalized persistent posing.");
         }
     }
 }

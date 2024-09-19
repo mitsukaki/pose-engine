@@ -155,5 +155,16 @@ namespace com.mitsukaki.poseengine.editor.anim
             state.writeDefaultValues = writeDefaultValues;
             return this;
         }
+
+        public AnimatorState FindStateByName(
+            string name, AnimatorControllerLayer layer
+        )
+        {
+            foreach (var state in layer.stateMachine.states)
+                if (state.state.name == name)
+                    return state.state;
+
+            return null;
+        }
     }
 }
