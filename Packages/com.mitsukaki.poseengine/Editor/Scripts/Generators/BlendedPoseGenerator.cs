@@ -91,8 +91,9 @@ namespace com.mitsukaki.poseengine.editor.generators
             }
             
             // add the parameter to the avatar parameters
+            var isSaved = context.factory.persistantPosing;
             ParameterUtility.AddNewParameter(
-                context, blendedPose.DrivingParameterName
+                context, blendedPose.DrivingParameterName, isSaved
             );
 
             // set the parameter drivers
