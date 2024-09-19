@@ -89,6 +89,10 @@ namespace com.mitsukaki.poseengine.editor
             }
 
             animatorMerger.animator = animBuilder;
+
+            // Set the pose parameter to be saved or not
+            if (factory.persistantPosing)
+                EnablePersistentPosing(poseEngineInstance);
         }
 
         /// <summary>
@@ -393,6 +397,30 @@ namespace com.mitsukaki.poseengine.editor
             if (!AssetDatabase.CopyAsset(assetPath, newPath )) return null;
 
             return AssetDatabase.LoadAssetAtPath<AnimatorController>(newPath);
+        }
+
+        private void EnablePersistentPosing(GameObject pePrefab)
+        {
+            Debug.Log("[PoseEngine] Enabling persistent posing...");
+            var maParams = pePrefab.GetComponent<ModularAvatarParameters>();
+            if (maParams == null)
+            {
+                Debug.LogError("[PoseEngine] Failed to find modular avatar parameters...");
+                return;
+            }
+
+            for (int i = 0; i < maParams.parameters.Count; i++)
+            {
+                if (maParams.parameters[i].nameOrPrefix == "PoseEngine/Pose")
+                {
+                    ParameterConfig maParam = maParams.parameters[i];
+                    maParam.saved = true;
+                    maParams.parameters[i] = maParam;
+                    return;
+                }
+            }
+
+            Debug.LogError("[PoseEngine] Failed to find pose parameter...");
         }
     }
 }

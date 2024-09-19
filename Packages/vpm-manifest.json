@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.vrchat.base": {
-      "version": "3.5.2-beta.1"
-    },
-    "com.vrchat.avatars": {
-      "version": "3.5.2-beta.1"
-    },
     "nadena.dev.modular-avatar": {
       "version": "1.9.8"
     },
@@ -14,19 +8,12 @@
     },
     "vrchat.blackstartx.gesture-manager": {
       "version": "3.8.8"
+    },
+    "com.vrchat.avatars": {
+      "version": "3.7.1-beta.2"
     }
   },
   "locked": {
-    "com.vrchat.base": {
-      "version": "3.6.1-beta.2",
-      "dependencies": {}
-    },
-    "com.vrchat.avatars": {
-      "version": "3.6.1-beta.2",
-      "dependencies": {
-        "com.vrchat.base": "3.6.1-beta.2"
-      }
-    },
     "nadena.dev.modular-avatar": {
       "version": "1.9.13",
       "dependencies": {
@@ -47,6 +34,16 @@
       "dependencies": {
         "com.vrchat.avatars": ">=3.5.2 < 3.7.X"
       }
+    },
+    "com.vrchat.avatars": {
+      "version": "3.7.1-beta.2",
+      "dependencies": {
+        "com.vrchat.base": "3.7.1-beta.2"
+      }
+    },
+    "com.vrchat.base": {
+      "version": "3.7.1-beta.2",
+      "dependencies": {}
     }
   }
 }

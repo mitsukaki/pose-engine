@@ -15,9 +15,11 @@ namespace com.mitsukaki.poseengine
         public string rootMenuName = "Pose Engine";
 
         public bool deleteNameIfIconSet = false;
+        public bool persistantPosing = false;
 
         public GameObject avatar;
 
         public SkinIcon[] skinIcons;
+
     }
 }
