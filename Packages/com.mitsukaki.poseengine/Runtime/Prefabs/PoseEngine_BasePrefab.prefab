@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 1529858741836273065}
   - component: {fileID: 8751462607977218803}
   m_Layer: 0
-  m_Name: Tracking Override
+  m_Name: Settings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

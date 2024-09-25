@@ -5,6 +5,7 @@ using UnityEditor.Animations;
 
 using nadena.dev.modular_avatar.core;
 
+using VRC.SDK3.Avatars.ScriptableObjects;
 using static com.mitsukaki.poseengine.editor.anim.Condition;
 
 #endregion
@@ -34,6 +35,11 @@ namespace com.mitsukaki.poseengine.editor
                 ParameterSyncType.Bool
             );
 
+            ParameterUtility.AddNewParameter(
+                context, "PoseEngine/PoseRestore/SaveEnabled", true,
+                ParameterSyncType.Bool
+            );
+
             // Replace the elevator parameter
             ParameterUtility.ReplaceParameterByName(
                 context, new ParameterConfig()
@@ -51,6 +57,7 @@ namespace com.mitsukaki.poseengine.editor
             var animBuilder = context.coreAnimator;
             animBuilder.AddParameter("PoseEngine/PoseRestore/PoseID", anim.Builder.IntParam);
             animBuilder.AddParameter("PoseEngine/PoseRestore/Mirrored", anim.Builder.BoolParam);
+            animBuilder.AddParameter("PoseEngine/PoseRestore/SaveEnabled", anim.Builder.BoolParam);
 
             // Create the new loading state, and transitions
             var layer = animBuilder.GetLayer(Constants.LOCO_LAYER);
@@ -59,12 +66,35 @@ namespace com.mitsukaki.poseengine.editor
             loadingState.writeDefaultValues = false;
 
             // Add the transitions to the restore state and also the current default state
-            // skip/bypass transition
+            // skip/bypass transitions
             animBuilder.StartTransition()
                 .From(loadingState).To(layer.stateMachine.defaultState)
                 .SetNoExitTime().SetFixedDuration(0.01f)
                 .When("PoseEngine/PoseRestore/PoseID", IsEqualTo, 0)
                 .Build();
+
+            animBuilder.StartTransition()
+                .From(loadingState).To(layer.stateMachine.defaultState)
+                .SetNoExitTime().SetFixedDuration(0.01f)
+                .When("PoseEngine/PoseRestore/SaveEnabled", false)
+                .Build();
+
+            // Create the pose restore saving toggle
+            var poseObject = new GameObject("Persist Poses");
+            var settingsObj = context.poseEngineInstance.transform
+                .GetChild(1).GetChild(2);
+            poseObject.transform.parent = settingsObj.transform;
+
+            // attatch the menu item to the object
+            var poseMenuItem = poseObject.AddComponent<ModularAvatarMenuItem>();
+            poseMenuItem.Control = new VRCExpressionsMenu.Control();
+
+            // create the menu item for the object
+            poseMenuItem.Control.name = "Persist Poses";
+            poseMenuItem.Control.value = 0;
+            poseMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
+            poseMenuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter();
+            poseMenuItem.Control.parameter.name = "PoseEngine/PoseRestore/SaveEnabled";
 
             Debug.Log("[PoseEngine] Enabled persistent posing.");
         }
@@ -114,7 +144,8 @@ namespace com.mitsukaki.poseengine.editor
             var transit = context.coreAnimator.StartTransition()
                 .From(loadingState).To(poseState)
                 .SetNoExitTime().SetFixedDuration(0.25f)
-                .When("PoseEngine/PoseRestore/PoseID", IsEqualTo, pose.PoseID);
+                .When("PoseEngine/PoseRestore/PoseID", IsEqualTo, pose.PoseID)
+                .When("PoseEngine/PoseRestore/SaveEnabled", true);
                 
             if (applyMirroring)
                 transit.When("PoseEngine/PoseRestore/Mirrored", isMirrored);
