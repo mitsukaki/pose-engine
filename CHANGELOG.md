@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Setup Guide
+
+## [0.6.1-beta.5] - 2024-09-26
+
+### Changed
+
+- Changed persistent pose restoration delay from 0.6s to 0.8s to help in it *actually firing*
+
+### Fixed
+
+- Fixed persistent poses incorrectly tracking mirroring
+
 ## [0.6.1-beta.4] - 2024-09-25
 
 ### Added

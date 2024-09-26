@@ -206,7 +206,7 @@ MonoBehaviour:
   enterPoseSpace: 0
   fixedDelay: 1
   delayTime: 0
-  debugString: 
+  debugString: PoseEngine/PoseExit
 --- !u!114 &-7510149187079866279
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1161,7 +1161,7 @@ MonoBehaviour:
   enterPoseSpace: 1
   fixedDelay: 1
   delayTime: 0
-  debugString: 
+  debugString: PoseEngine/PoseEnter
 --- !u!1101 &-856401637907048847
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1783,8 +1783,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enterPoseSpace: 1
   fixedDelay: 1
-  delayTime: 0.6
-  debugString: 
+  delayTime: 0.8
+  debugString: PoseEngine/RestorationEntry
 --- !u!1102 &1210680347291248615
 AnimatorState:
   serializedVersion: 6
@@ -2593,7 +2593,7 @@ MonoBehaviour:
   enterPoseSpace: 1
   fixedDelay: 1
   delayTime: 0.21
-  debugString: 
+  debugString: PoseEngine/DelayedEnter
 --- !u!1101 &6373547713108004151
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

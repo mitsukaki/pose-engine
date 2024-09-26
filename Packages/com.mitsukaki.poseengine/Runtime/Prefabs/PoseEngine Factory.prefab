@@ -46,13 +46,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rootMenuName: Pose Engine
   deleteNameIfIconSet: 0
+  persistantPosing: 1
   avatar: {fileID: 0}
   skinIcons:
   - name: Reset
     icon: {fileID: 0}
   - name: Poses
-    icon: {fileID: 0}
-  - name: Tracking Override
     icon: {fileID: 0}
   - name: Immobilize
     icon: {fileID: 0}
@@ -62,11 +61,13 @@ MonoBehaviour:
     icon: {fileID: 0}
   - name: UP
     icon: {fileID: 0}
-  - name: Tracking Override/Disable Feet
+  - name: Settings
     icon: {fileID: 0}
-  - name: Tracking Override/Disable Hips
+  - name: Settings/Disable Feet
     icon: {fileID: 0}
-  - name: Tracking Override/Disable Hands
+  - name: Settings/Disable Hips
     icon: {fileID: 0}
-  - name: Tracking Override/Disable Head
+  - name: Settings/Disable Hands
+    icon: {fileID: 0}
+  - name: Settings/Disable Head
     icon: {fileID: 0}

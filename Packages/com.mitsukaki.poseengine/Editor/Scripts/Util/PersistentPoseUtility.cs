@@ -154,20 +154,16 @@ namespace com.mitsukaki.poseengine.editor
         }
 
         public static void ApplyPersistenceParamDrivers(
-            AnimatorState state, Pose pose, bool isMirrored
+            AnimatorState state, Pose pose, bool isMirrored, bool applyMirroring = true
         )
         {
             VRCBehaviourUtility.SetParam(
                 state, "PoseEngine/PoseRestore/PoseID", pose.PoseID
             );
 
-            VRCBehaviourUtility.SetParam(
-                state, "PoseEngine/PoseRestore/Activating", false
-            );
-
-            if (isMirrored)
-                VRCBehaviourUtility.SetParamFlag(
-                    state, "PoseEngine/PoseRestore/Mirrored"
+            if (applyMirroring)
+                VRCBehaviourUtility.SetParam(
+                    state, "PoseEngine/PoseRestore/Mirrored", isMirrored
                 );
         }
     }
