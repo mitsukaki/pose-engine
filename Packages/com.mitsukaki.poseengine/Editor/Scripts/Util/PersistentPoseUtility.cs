@@ -100,7 +100,7 @@ namespace com.mitsukaki.poseengine.editor
 
             // create the menu item for the object
             poseMenuItem.Control.name = "Persist Poses";
-            poseMenuItem.Control.value = 0;
+            poseMenuItem.Control.value = 1.0f;
             poseMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
             poseMenuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter();
             poseMenuItem.Control.parameter.name = "PoseEngine/PoseRestore/SaveEnabled";

@@ -366,7 +366,7 @@ PrefabInstance:
     - target: {fileID: 3813973895529122467, guid: ad80c516d1915004695018ca6cd579d3,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3813973895529122493, guid: ad80c516d1915004695018ca6cd579d3,
         type: 3}
@@ -819,6 +819,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Test Avatar (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3813973895529122467, guid: ad80c516d1915004695018ca6cd579d3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3813973895529122493, guid: ad80c516d1915004695018ca6cd579d3,
         type: 3}
