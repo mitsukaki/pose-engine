@@ -12,7 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Setup Utility + Guide
 - Added pose-driven action system (setting parameters)
 - Pose Conditions
-- 
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+## [0.6.1-beta.6] - 2024-09-27
+
+### Changed
+
+- Changed persistent pose restoration delay from 0.8s to 0.35s (sorry)
+
+### Fixed
+
+- Fixed bug where persistent pose constantly aligned to the user head
+
 
 ## [0.6.1-beta.5] - 2024-09-26
 
