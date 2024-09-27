@@ -41,7 +41,7 @@
 
 .pe_setup-note {
     align-self: center;
-    text-align: center;
+    -unity-text-align: center;
 }
 
 .pe_avatar_label {
