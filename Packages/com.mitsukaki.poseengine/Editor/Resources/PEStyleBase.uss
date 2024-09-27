@@ -1,0 +1,59 @@
+.pe_banner-primary {
+    background-image: resource('PoseEngine_Banner');
+}
+
+.pe_banner {
+    margin: 16px;
+    background-color: rgba(188, 188, 188, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    left: auto;
+    right: auto;
+    top: 0;
+    bottom: 64px;
+    opacity: 1;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    flex-grow: 0;
+    height: 64px;
+    justify-content: flex-start;
+    width: 256px;
+    align-items: auto;
+    align-self: center;
+}
+
+.pe_paragraph {
+    white-space: normal;
+    word-wrap: break-word;
+    padding: 8px;
+}
+
+.pe_header-label {
+    align-self: center;
+    margin-top: 16px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.pe_setup-note {
+    align-self: center;
+    text-align: center;
+}
+
+.pe_avatar_label {
+    align-self: center;
+    margin-top: 16px;
+}
+
+.pe_avatar_selector {
+    align-self: center;
+    margin-top: 8px;
+    width: 100%;
+    max-width: 256px;
+    padding-left: 8px;
+    padding-right: 8px;
+}

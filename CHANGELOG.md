@@ -9,7 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Setup Guide
+- Setup Utility + Guide
+- Added pose-driven action system (setting parameters)
+- Pose Conditions
+- 
 
 ## [0.6.1-beta.5] - 2024-09-26
 

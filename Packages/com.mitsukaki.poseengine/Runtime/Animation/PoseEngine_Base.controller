@@ -1783,7 +1783,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enterPoseSpace: 1
   fixedDelay: 1
-  delayTime: 0.8
+  delayTime: 0.35
   debugString: PoseEngine/RestorationEntry
 --- !u!1102 &1210680347291248615
 AnimatorState:

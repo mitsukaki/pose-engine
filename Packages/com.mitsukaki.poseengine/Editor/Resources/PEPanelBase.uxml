@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.mitsukaki.poseengine/Editor/Resources/PEStyleBase.uss?fileID=7433441132597879392&amp;guid=8e0658d6d72f6da4595f215df5241572&amp;type=3#PEStyleBase" />
+    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="false" enable-rich-text="false" tooltip="Click for Documentation" focusable="false" name="pe_banner" class="pe_banner pe_banner-primary" />
+    <ui:VisualElement style="flex-grow: 1;" />
+</ui:UXML>
