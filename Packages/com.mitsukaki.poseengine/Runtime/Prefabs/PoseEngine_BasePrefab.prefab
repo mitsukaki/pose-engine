@@ -309,6 +309,16 @@ MonoBehaviour:
     saved: 0
     hasExplicitDefaultValue: 1
     m_overrideAnimatorDefaults: 1
+  - nameOrPrefix: PoseEngine/PoseRestore/NeedsAligning
+    remapTo: 
+    internalParameter: 0
+    isPrefix: 0
+    syncType: 0
+    localOnly: 0
+    defaultValue: 0
+    saved: 0
+    hasExplicitDefaultValue: 1
+    m_overrideAnimatorDefaults: 1
 --- !u!1 &2828816547631672129
 GameObject:
   m_ObjectHideFlags: 0

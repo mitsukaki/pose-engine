@@ -40,6 +40,15 @@ namespace com.mitsukaki.poseengine.editor
                 ParameterSyncType.Bool
             );
 
+            var prm = ParameterUtility.FindParameterByName(
+                maParams, "PoseEngine/PoseRestore/NeedsAligning"
+            );
+            
+            prm.defaultValue = 1.0f;
+            prm.syncType = ParameterSyncType.Bool;
+            prm.hasExplicitDefaultValue = true;
+            ParameterUtility.ReplaceParameterByName(context, prm);
+
             // Replace the elevator parameter
             ParameterUtility.ReplaceParameterByName(
                 context, new ParameterConfig()

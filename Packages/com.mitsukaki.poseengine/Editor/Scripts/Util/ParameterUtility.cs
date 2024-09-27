@@ -56,7 +56,8 @@ namespace com.mitsukaki.poseengine.editor
             PoseBuildContext ctx,
             string parameterName,
             bool isSaved = false,
-            ParameterSyncType syncType = ParameterSyncType.Float
+            ParameterSyncType syncType = ParameterSyncType.Float,
+            float defaultValue = 0.0f
         )
         {
             // ensure it doesn't already exist
@@ -74,9 +75,9 @@ namespace com.mitsukaki.poseengine.editor
                 isPrefix = false,
                 syncType = syncType,
                 localOnly = isLocalOnly,
-                defaultValue = 0.0f,
+                defaultValue = defaultValue,
                 saved = isSaved,
-                hasExplicitDefaultValue = false
+                hasExplicitDefaultValue = true
             };
 
             // add the new parameter to the list
